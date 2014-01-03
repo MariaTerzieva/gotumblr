@@ -9,7 +9,7 @@ A Go Tumblr API v2 Client.
 Install
 -------
 
-`go get github.com/MariaTerzieva/gotumblr`
+In terminal write `go get github.com/MariaTerzieva/gotumblr`
 
 Examples
 --------
