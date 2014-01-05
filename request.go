@@ -1,6 +1,8 @@
 package gotumblr
 
 import (
+	"fmt"
+	"strings"
 	"net/url"
 	"net/http"
 	"io/ioutil"
@@ -39,10 +41,10 @@ func NewTumblrRequest(consumerKey, consumerSecret, oauthToken, oauthSecret, call
 }
 
 //Make a GET request to the API with properly formatted parameters
-//url: the url you are making the request to
+//requestUrl: the url you are making the request to
 //params: the parameters needed for the request 
-func (tr *TumblrRequest) Get(url string, params map[string]string) map[string]interface{} {
-	full_url := tr.host + url
+func (tr *TumblrRequest) Get(requestUrl string, params map[string]string) map[string]interface{} {
+	full_url := tr.host + requestUrl
 	if len(params) != 0 {
 		values := url.Values{}
 		for key, value := range params {
@@ -70,17 +72,17 @@ func (tr *TumblrRequest) Get(url string, params map[string]string) map[string]in
 }
 
 //Makes a POST request to the API, allows for multipart data uploads
-//url: the url you are making the request to
+//requestUrl: the url you are making the request to
 //params: all the parameters needed for the request
 //files: list of files
-func (tr *TumblrRequest) Post(url string, params map[string]string, files []string) map[string]interface{} {
-	full_url := tr.host + url
+func (tr *TumblrRequest) Post(requestUrl string, params map[string]string, files []string) map[string]interface{} {
+	full_url := tr.host + requestUrl
 	if len(files) != 0 {
-		return tr.PostMultipart(url, params, files)
+		return tr.PostMultipart(requestUrl, params, files)
 	} else {
 		values := url.Values{}
 		for key, value := range params {
-			value.Set(key, value)
+			values.Set(key, value)
 		}
 		httpRequest, err := http.NewRequest("POST", full_url, strings.NewReader(values.Encode()))
 		if err != nil {
@@ -111,27 +113,20 @@ func (tr *TumblrRequest) JsonParse(content []byte) map[string]interface{} {
 	if err != nil {
 		fmt.Println(err)
 	}
-	ok_statuses := []int{200, 201, 301}
-	status := data["meta"].(map[string]interface{})["status"]
-	for _, ok_status := range ok_statuses {
-		if status == ok_status {
-			return data["response"].(map[string]interface{})
-		}
-	}
 	return data
 }
 
 //Generates and makes a multipart request for data files
-//url: the url you are making the request to
+//requestUrl: the url you are making the request to
 //params: all parameters needed for the request
 //files: a list of files
-func (tr *TumblrRequest) PostMultipart(url string, params map[string]string, files []string) map[string]interface{} {
-
+func (tr *TumblrRequest) PostMultipart(requestUrl string, params map[string]string, files []string) map[string]interface{} {
+	return map[string]interface{}{}
 }
 
 //Properly encodes the multipart body of the request
 //fields: the parameters used in the request
 //files: a list of lists containing information about the files
 func (tr *TumblrRequest) EncodeMultipartFormdata(fields map[string]string, files []string) (string, string) {
-
+	return "",""
 }
