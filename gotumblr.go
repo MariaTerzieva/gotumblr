@@ -15,7 +15,7 @@ type TumblrRestClient struct {
 //consumerKey is the consumer key of your Tumblr Application
 //consumerSecret is the consumer secret of your Tumblr Application
 //oauthToken is the user specific token, received from the /access_token endpoint
-//oauthSecret is the user specific sechttps://www.facebook.com/?stype=lo&jlou=Afd0i67De7AJHB-KpdsH0H3JJVp662nkyJaGWT1_lAO-81gDDZkopEwv6h9VAazWbRuaaRKLB9GaTl7LataozuWw1bOBSpPo_gImejlKpAStTw&smuh=13421&lh=Ac9QPOHNfIdte3jLret, received from the /access_token endpoint
+//oauthSecret is the user specific secret, received from the /access_token endpoint
 //host is the host that you are tryng to send information to (e.g. http://api.tumblr.com)
 func NewTumblrRestClient(consumerKey, consumerSecret, oauthToken, oauthSecret, callbackUrl, host string) *TumblrRestClient {
 	return &TumblrRestClient{NewTumblrRequest(consumerKey, consumerSecret, oauthToken, oauthSecret, callbackUrl, host)}
