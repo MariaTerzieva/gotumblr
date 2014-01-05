@@ -1,11 +1,11 @@
 package gotumblr
 
-import "github.com/garyburd/go-oauth/oauth"
+import "github.com/kurrik/oauth1a"
 
 //Make queries to the Tumblr API through TumblrRequest
 type TumblrRequest struct {
-	consumer *oauth.Client
-	token *oauth.Credentials
+	service *oauth1a.Service
+	userConfig *oauth1a.UserConfig
 	host string
 }
 
@@ -15,21 +15,20 @@ type TumblrRequest struct {
 //oauthToken is the user specific token, received from the /access_token endpoint
 //oauthSecret is the user specific secret, received from the /access_token endpoint
 //host is the host that you are tryng to send information to (e.g. http://api.tumblr.com)
-func NewTumblrRequest(consumerKey string, consumerSecret string, oauthToken string, oauthSecret string, host string) *TumblrRequest {
-	consumer := oauth.Client{
-		Credentials: oauth.Credentials{
-			Token: consumerKey
-			Secret: consumerSecret
-		},
-		TemporaryCredentialRequestURI: "http://www.tumblr.com/oauth/request_token",
-		ResourceOwnerAuthorisationURI: "http://www.tumblr.com/oauth/authorize",
-		TokenRequestURI: "http://www.tumblr.com/oauth/access_token",
+func NewTumblrRequest(consumerKey, consumerSecret, oauthToken, oauthSecret, callbackUrl, host string) *TumblrRequest {
+	service := &oauth1a.Service{
+		RequestURL:   "http://www.tumblr.com/oauth/request_token",
+		AuthorizeURL: "http://www.rumblr.com/oauth/authorize",
+		AccessURL:    "http://www.tumblr.com/oauth/access_token",
+		ClientConfig: &oauth1a.ClientConfig{
+			ConsumerKey:    consumerKey,
+			ConsumerSecret: consumerSecret,
+			CallbackURL:    callbackUrl,
+	    },
+		Signer: new(oauth1a.HmacSha1Signer),
 	}
-	token := oauth.Credentials{
-		Token: oauthToken
-		Secret: oauthSecret
-	}
-	return &TumblrRequest{&consumer, &token, host}
+	userConfig := oauth1a.NewAuthorizedConfig(oauthToken, oauthSecret)
+	return &TumblrRequest{service, userConfig, host}
 }
 
 //Make a GET request to the API with properly formatted parameters
