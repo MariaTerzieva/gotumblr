@@ -6,7 +6,7 @@ import (
 		"io/ioutil"
 		"encoding/json"
 		"github.com/kurrik/oauth1a"
-		)
+)
 
 //Make queries to the Tumblr API through TumblrRequest
 type TumblrRequest struct {
