@@ -35,7 +35,7 @@ func NewTumblrRequest(consumerKey, consumerSecret, oauthToken, oauthSecret, call
 //Make a GET request to the API with properly formatted parameters
 //url: the url you are making the request to
 //params: the parameters needed for the request 
-func (tr TumblrRequest) Get(url string, params map[string]string) map[string]interface{}{} {
+func (tr TumblrRequest) Get(url string, params map[string]string) map[string]interface{} {
 
 }
 
@@ -43,13 +43,13 @@ func (tr TumblrRequest) Get(url string, params map[string]string) map[string]int
 //url: the url you are making the request to
 //params: all the parameters needed for the request
 //files: list of files
-func (tr TumblrRequest) Post(url string, params map[string]string, files []string) map[string]interface{}{} {
+func (tr TumblrRequest) Post(url string, params map[string]string, files []string) map[string]interface{} {
 
 }
 
 //Parse JSON response.
 //content: the content returned from the web request to be pares as JSON
-func (tr TumblrRequest) JsonParse(content) map[string]interface{}{} {
+func (tr TumblrRequest) JsonParse(content) map[string]interface{} {
 
 }
 
@@ -57,13 +57,13 @@ func (tr TumblrRequest) JsonParse(content) map[string]interface{}{} {
 //url: the url you are making the request to
 //params: all parameters needed for the request
 //files: a list of files
-func (tr TumblrRequest) PostMultipart(url string, params map[string]string, files []string) map[string]interface{}{} {
+func (tr TumblrRequest) PostMultipart(url string, params map[string]string, files []string) map[string]interface{} {
 
 }
 
 //Properly encodes the multipart body of the request
 //fields: the parameters used in the request
 //files: a list of lists containing information about the files
-func (tr TumblrRequest) EncodeMultipartFormdata(fields map[string]string, files []string) []string {
+func (tr TumblrRequest) EncodeMultipartFormdata(fields map[string]string, files []string) (string, string) {
 
 }
