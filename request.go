@@ -12,6 +12,7 @@ type TumblrRequest struct {
 //Initializes the TumblrRequest.
 //consumerKey is the consumer key of your Tumblr Application
 //consumerSecret is the consumer secret of your Tumblr Application
+//callbackUrl is the callback URL of your Tumblr Application
 //oauthToken is the user specific token, received from the /access_token endpoint
 //oauthSecret is the user specific secret, received from the /access_token endpoint
 //host is the host that you are tryng to send information to (e.g. http://api.tumblr.com)
