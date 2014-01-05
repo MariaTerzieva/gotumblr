@@ -15,6 +15,7 @@ type TumblrRequest struct {
 	service *oauth1a.Service
 	userConfig *oauth1a.UserConfig
 	host string
+	apiKey string
 }
 
 //Initializes the TumblrRequest.
@@ -37,7 +38,7 @@ func NewTumblrRequest(consumerKey, consumerSecret, oauthToken, oauthSecret, call
 		Signer: new(oauth1a.HmacSha1Signer),
 	}
 	userConfig := oauth1a.NewAuthorizedConfig(oauthToken, oauthSecret)
-	return &TumblrRequest{service, userConfig, host}
+	return &TumblrRequest{service, userConfig, host, consumerKey}
 }
 
 //Make a GET request to the API with properly formatted parameters
