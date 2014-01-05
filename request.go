@@ -1,11 +1,11 @@
 package gotumblr
 
 import (
-		"net/url"
-		"net/http"
-		"io/ioutil"
-		"encoding/json"
-		"github.com/kurrik/oauth1a"
+	"net/url"
+	"net/http"
+	"io/ioutil"
+	"encoding/json"
+	"github.com/kurrik/oauth1a"
 )
 
 //Make queries to the Tumblr API through TumblrRequest
