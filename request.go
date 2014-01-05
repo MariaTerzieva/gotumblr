@@ -74,7 +74,33 @@ func (tr *TumblrRequest) Get(url string, params map[string]string) map[string]in
 //params: all the parameters needed for the request
 //files: list of files
 func (tr *TumblrRequest) Post(url string, params map[string]string, files []string) map[string]interface{} {
-
+	full_url := tr.host + url
+	if len(files) != 0 {
+		return tr.PostMultipart(url, params, files)
+	} else {
+		values := url.Values{}
+		for key, value := range params {
+			value.Set(key, value)
+		}
+		httpRequest, err := http.NewRequest("POST", full_url, strings.NewReader(values.Encode()))
+		if err != nil {
+			fmt.Println(err)
+		}
+		httpRequest.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		tr.service.Sign(httpRequest, tr.userConfig)
+		var httpResponse *http.Response
+		httpClient := new(http.Client)
+		httpResponse, err2 := httpClient.Do(httpRequest)
+		if err2 != nil {
+			fmt.Println(err2)
+		}
+		defer httpResponse.Body.Close()
+		body, err3 := ioutil.ReadAll(httpResponse.Body)
+		if err3 != nil {
+			fmt.Println(err3)
+		}
+		return tr.JsonParse(body)
+	}
 }
 
 //Parse JSON response.
