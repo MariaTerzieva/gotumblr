@@ -140,7 +140,7 @@ func ExampleLike() {
 	reblogKey := "6l3e2pGL"
 	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
 	like := client.Like(id, reblogKey)
-	fmt.Println(like["meta"].(map[string]interface{})["status"])api tumblr
+	fmt.Println(like["meta"].(map[string]interface{})["status"])
 	//Output:
 	//200
 }
