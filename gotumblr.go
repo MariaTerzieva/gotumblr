@@ -165,14 +165,14 @@ func (trc *TumblrRestClient) Unfollow(blogname string) map[string]interface{} {
 
 //Like post of a given blog
 //id: the id of the post you want to like
-//reblogKey: the reblog key for the post id
+//reblog_key: the reblog key for the post id
 func (trc *TumblrRestClient) Like(id int, reblogKey string) map[string]interface{} {
 
 }
 
 //Unlike a post of a given blog
 //id: the id of the post you want to unlike
-//reblogKey: the reblog key for the post id
+//reblog_key: the reblog key for the post id
 func (trc *TumblrRestClient) Unlike(id int, reblogKey string) map[string]interface{} {
 
 }
@@ -180,6 +180,7 @@ func (trc *TumblrRestClient) Unlike(id int, reblogKey string) map[string]interfa
 //Create a photo post or photoset on a blog
 //blogname: the url of the blog you want to post to
 //options can be:
+//with * are marked required options
 //state: the state of the post(e.g. published, draft, queue, private)
 //tags: a list of tags you want applied to the post
 //tweet: manages the autotweet for this post: set to off for no tweet
@@ -189,8 +190,8 @@ func (trc *TumblrRestClient) Unlike(id int, reblogKey string) map[string]interfa
 //slug: add a short text summary to the end of the post url
 //caption: the caption that you want applied to the photo
 //link: the 'click-through' url for the photo
-//source: the photo source url(either source or data)
-//data: one or more image files(wither source or data)
+//*source: the photo source url(either source or data)
+//*data: one or more image files(wither source or data)
 func (trc *TumblrRestClient) CreatePhoto(blogname string, options map[string]string) map[string]interface{} {
 
 }
@@ -198,6 +199,7 @@ func (trc *TumblrRestClient) CreatePhoto(blogname string, options map[string]str
 //Create a text post on a blog
 //blogname: the url of the blog you want to post to
 //options can be:
+//with * are marked required options
 //state: the state of the post(e.g. published, draft, queue, private)
 //tags: a list of tags you want applied to the post
 //tweet: manages the autotweet for this post: set to off for no tweet
@@ -206,7 +208,7 @@ func (trc *TumblrRestClient) CreatePhoto(blogname string, options map[string]str
 //format: sets the format type of the post(html or markdown)
 //slug: add a short text summary to the end of the post url
 //title: the optional title of the post
-//body: the full text body
+//*body: the full text body
 func (trc *TumblrRestClient) CreateText(blogname string, options map[string]string) map[string]interface{} {
 
 }
@@ -214,6 +216,7 @@ func (trc *TumblrRestClient) CreateText(blogname string, options map[string]stri
 //Create a quote post on a blog
 //blogname: the url of the blog you want to post to
 //options can be:
+//with * are marked required options
 //state: the state of the post(e.g. published, draft, queue, private)
 //tags: a list of tags you want applied to the post
 //tweet: manages the autotweet for this post: set to off for no tweet
@@ -221,7 +224,7 @@ func (trc *TumblrRestClient) CreateText(blogname string, options map[string]stri
 //date: the GMT date and time of the post as a string
 //format: sets the format type of the post(html or markdown)
 //slug: add a short text summary to the end of the post url
-//quote: the full text of the quote
+//*quote: the full text of the quote
 //source: the cited source of the quote
 func (trc *TumblrRestClient) CreateQuote(blogname string, options map[string]string) map[string]interface{} {
 
@@ -230,6 +233,7 @@ func (trc *TumblrRestClient) CreateQuote(blogname string, options map[string]str
 //Create a link post on a blog
 //blogname: the url of the blog you want to po.tumblr.comst to
 //options can be:
+//with * are marked required options
 //state: the state of the post(e.g. published, draft, queue, private)
 //tags: a list of tags you want applied to the post
 //tweet: manages the autotweet for this post: set to off for no tweet
@@ -238,7 +242,7 @@ func (trc *TumblrRestClient) CreateQuote(blogname string, options map[string]str
 //format: sets the format type of the post(html or markdown)
 //slug: add a short text summary to the end of the post url
 //title: the title of the page the link points to
-//url: the link you are posting
+//*url: the link you are posting
 //description: the description of the link you are posting
 func (trc *TumblrRestClient) CreateLink(blogname string, options map[string]string) map[string]interface{} {
 
@@ -247,6 +251,7 @@ func (trc *TumblrRestClient) CreateLink(blogname string, options map[string]stri
 //Create a chat post on a blog
 //blogname: the url of the blog you want to post to
 //options can be:
+//with * are marked required options
 //state: the state of the post(e.g. published, draft, queue, private)
 //tags: a list of tags you want applied to the post
 //tweet: manages the autotweet for this post: set to off for no tweet
@@ -255,7 +260,7 @@ func (trc *TumblrRestClient) CreateLink(blogname string, options map[string]stri
 //format: sets the format type of the post(html or markdown)
 //slug: add a short text summary to the end of the post url
 //title: the title of the chat
-//conversation: the text of the conversation/chat, with dialogue labels
+//*conversation: the text of the conversation/chat, with dialogue labels
 func (trc *TumblrRestClient) CreateChatPost(blogname string, options map[string]string) map[string]interface{} {
 
 }
@@ -263,6 +268,7 @@ func (trc *TumblrRestClient) CreateChatPost(blogname string, options map[string]
 //Create an audio post on a blog
 //blogname: the url of the blog you want to post to
 //options can be:
+//with * are marked required options
 //state: the state of the post(e.g. published, draft, queue, private)
 //tags: a list of tags you want applied to the post
 //tweet: manages the autotweet for this post: set to off for no tweet
@@ -271,8 +277,8 @@ func (trc *TumblrRestClient) CreateChatPost(blogname string, options map[string]
 //format: sets the format type of the post(html or markdown)
 //slug: add a short text summary to the end of the post url
 //caption: the caption of the post
-//external_url: the url of the site that hosts the oudio file
-//data: the local filename path to the audio you are uploading
+//*external_url: the url of the site that hosts the oudio file(either external_url or data)
+//*data: the local filename path to the audio you are uploading(either external_url or data)
 func (trc *TumblrRestClient) CreateAudio(blogname string, options map[string]string) map[string]interface{} {
 
 }
@@ -280,6 +286,7 @@ func (trc *TumblrRestClient) CreateAudio(blogname string, options map[string]str
 //Create a video post on a blog
 //blogname: the url of the blog you want to post to
 //options can be:
+//with * are marked required options
 //state: the state of the post(e.g. published, draft, queue, private)
 //tags: a list of tags you want applied to the post
 //tweet: manages the autotweet for this post: set to off for no tweet
@@ -288,16 +295,18 @@ func (trc *TumblrRestClient) CreateAudio(blogname string, options map[string]str
 //format: sets the format type of the post(html or markdown)
 //slug: add a short text summary to the end of the post url
 //caption: the caption for the post
-//embed: the html embed code for the video
-//data: the local filename path to the video you are uploading
+//*embed: the html embed code for the video(either embed or data)
+//*data: the local filename path to the video you are uploading(either embed or data)
 func (trc *TumblrRestClient) CreateVideo(blogname string, options map[string]string) map[string]interface{} {
 
 }
 
 //Creates a reblog on the given blog
 //blogname: the url of the blog you want to reblog to
-//id: the id of the reblogged post
-//reblogKey: the reblog key for the post
+//options should be:
+//with * are marked required options
+//*id: the id of the reblogged post
+//*reblog_key: the reblog key of the rebloged post
 func (trc *TumblrRestClient) Reblog(blogname string, options map[string]string) map[string]interface{} {
 
 }
@@ -312,12 +321,14 @@ func (trc *TumblrRestClient) DeletePost(blogname string, id int) map[string]inte
 //Edits a post with a given id
 //blogname: the url of the blog you want to post to
 //options can be:
+//with * are marked required options
 //tags: a list of tags you want applied to the post
 //tweet: manages the autotweet for this post: set to off for no tweet
 //		 or enter text to override the default tweet
 //date: the GMT date and time of the post as a string
 //format: sets the format type of the post(html or markdown)
 //slug: add a short text summary to the end of the post url
+//*id: the id of the post
 func (trc *TumblrRestClient) EditPost(blogname string, options map[string]string) map[string]interface{} {
 
 }
