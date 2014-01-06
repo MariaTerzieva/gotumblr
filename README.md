@@ -28,7 +28,7 @@ To use this package in your projects do this (after install):
 
 You are going to need a consumer key, consumer secret, callback URL, token and token secret.
 You can get the consumer key, consumer secret and callback URL by registering a Tumblr application.
-You can do so by clicking [here](www.tumblr.com/oauth/apps).
+You can do so by clicking [here](http://www.tumblr.com/oauth/apps).
 The token and token secret you can get by using OAUTH.
 If you want to use this package just for your own tumblr account, after registering the application,
 click on the Explore API option and allow it access to your Tumblr account. You are going to see a tab "Show keys".
