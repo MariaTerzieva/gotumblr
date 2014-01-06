@@ -6,31 +6,31 @@ import (
 )
 
 func ExampleInfo(){
-	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "http://api.tumblr.com")
+	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
 	info := client.Info()
 	fmt.Println(info["response"].(map[string]interface{})["blog"].(map[string]interface{})["name"])
 	//Output:
-	//mgterzieva
+	//the name of the user's blog here(e.g. blogname in blogname.tumblr.com) 
 }
 
 func ExampleLikes(){
-	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "http://api.tumblr.com")
-	likes := client.Likes(map[string]int{})
+	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
+	likes := client.Likes(map[string]string{}{})
 	fmt.Println(likes["response"].(map[string]interface{})["liked_count"])
 	//Output:
-	//1
+	//the count of the posts the user has liked here
 }
 
 func ExampleFollowing(){
-	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "http://api.tumblr.com")
-	following := client.Following(map[string]int{})
+	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
+	following := client.Following(map[string]string{}{})
 	fmt.Println(following["response"].(map[string]interface{})["total_blogs"])
 	//Output:
-	//5
+	//the number of the blogs the user is following here
 }
 
 func ExampleDashboard(){
-	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "http://api.tumblr.com")
+	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
 	dashboard := client.Dashboard(map[string]string{"limit": "1"})
 	fmt.Println(dashboard["response"].(map[string]interface{})["blog"].(map[string]interface{})["state"])
 	//Output:
@@ -38,7 +38,7 @@ func ExampleDashboard(){
 }
 
 func ExampleTagged(){
-	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "http://api.tumblr.com")
+	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
 	tagged := client.Tagged("golang", map[string]string{"limit": "1"})
 	fmt.Println(tagged["response"].(map[string]interface{})["blog"].(map[string]interface{})["state"])
 	//Output:
@@ -46,57 +46,63 @@ func ExampleTagged(){
 }
 
 func ExamplePosts(){
-	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "http://api.tumblr.com")
-	posts := client.Posts("mgterzieva.tumblr.com", "text", map[string]string{"limit": "1"})
+	blogname := "example.tumblr.com"
+	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
+	posts := client.Posts(blogname, "text", map[string]string{"limit": "1"})
 	fmt.Println(posts["response"].(map[string]interface{})["blog"].(map[string]interface{})["total_posts"])
 	//Output:
-	//2
+	//the number of all blog posts here; don't forget to change blogname according to your credentials!
 }
 
 func ExampleBlogInfo(){
-	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "http://api.tumblr.com")
-	blogInfo := client.BlogInfo("mgterzieva.tumblr.com")
+	blogname := "example.tumblr.com"
+	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
+	blogInfo := client.BlogInfo(blogname)
 	fmt.Println(blogInfo["response"].(map[string]interface{})["blog"].(map[string]interface{})["title"])
 	//Output:
-	//Testing the GO Tumblr API
+	//the title of the blog here; don't forget to change blogname according to your credentials!
 }
 
 func ExampleFollowers(){
-	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "http://api.tumblr.com")
-	followers := client.Followers("mgterzieva.tumblr.com", map[string]string{})
+	blogname := "example.tumblr.com"
+	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
+	followers := client.Followers(blogname, map[string]string{}{})
 	fmt.Println(followers["response"].(map[string]interface{})["total_users"])
 	//Output:
-	//0
+	//the number of all followers of the blog; don't forget to change blogname according to your credentials!
 }
 
 func ExampleBlogLikes(){
-	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "http://api.tumblr.com")
-	likes := client.BlogLikes("mgterzieva.tumblr.com", map[string]string{})
+	blogname := "example.tumblr.com"
+	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
+	likes := client.BlogLikes(blogname, map[string]string{}{})
 	fmt.Println(likes["response"].(map[string]interface{})["liked_count"])
 	//Output:
-	//1
+	//the number of all blog likes here; don't forget to change blogname according to your credentials!
 }
 
 func ExampleQueue(){
-	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "http://api.tumblr.com")
-	queue := client.Queue("mgterzieva.tumblr.com", map[string]string{})
+	blogname := "example.tumblr.com"
+	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
+	queue := client.Queue(blogname, map[string]string{}{})
 	fmt.Println(queue["response"].(map[string]interface{})["posts"])
 	//Output:
-	//[]
+	//an interface of all posts in the queue;  don't forget to change blogname according to your credentials!
 }
 
 func ExampleDrafts(){
-	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "http://api.tumblr.com")
-	drafts := client.Drafts("mgterzieva.tumblr.com", map[string]string{})
+	blogname := "example.tumblr.com"
+	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
+	drafts := client.Drafts(blogname, map[string]string{}{})
 	fmt.Println(drafts["response"].(map[string]interface{})["posts"])
 	//Output:
-	//[]
+	//an interface of all posts in the drafts section;  don't forget to change blogname according to your credentials!
 }
 
 func ExampleSubmission(){
-	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "http://api.tumblr.com")
-	submission := client.Submission("mgterzieva.tumblr.com", map[string]string{})
+	blogname := "example.tumblr.com"
+	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
+	submission := client.Submission(blogname, map[string]string{}{})
 	fmt.Println(submission["response"].(map[string]interface{})["posts"])
 	//Output:
-	//[]
-}
+	//an interface of all posts in the submissions section;  don't forget to change blogname according to your credentials!
