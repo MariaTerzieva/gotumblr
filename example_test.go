@@ -107,3 +107,61 @@ func ExampleSubmission() {
 	//Output:
 	//an interface of all posts in the submissions section;  don't forget to change blogname according to your credentials!
 }
+
+func ExampleAvatar() {
+	blogname := "example.tumblr.com"
+	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
+	avatar := client.Avatar(blogname, 64)
+	fmt.Println(avatar["meta"].(map[string]interface{})["status"])
+	//Output:
+	//301
+}
+
+func ExampleFollow() {
+	blogname := "mgterzieva.tumblr.com"
+	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
+	follow := client.Follow(blogname)
+	fmt.Println(follow["meta"].(map[string]interface{})["status"])
+	//Output:
+	//200
+}
+
+func ExampleUnfollow() {
+	blogname := "mgterzieva.tumblr.com"
+	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
+	unfollow := client.Unfollow(blogname)
+	fmt.Println(unfollow["meta"].(map[string]interface{})["status"])
+	//Output:
+	//200
+}
+
+func ExampleLike() {
+	id := 72078164824
+	reblogKey := "6l3e2pGL"
+	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
+	like := client.Like(id, reblogKey)
+	fmt.Println(like["meta"].(map[string]interface{})["status"])api tumblr
+	//Output:
+	//200
+}
+
+func ExampleUnlike() {
+	id := 72078164824
+	reblogKey := "6l3e2pGL"
+	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
+	unlike := client.Unlike(id, reblogKey)
+	fmt.Println(unlike["meta"].(map[string]interface{})["status"])
+	//Output:
+	//200
+}
+
+func ExampleReblog() {
+	blogname := "example.tumblr.com"
+	id := "72078164824"
+	reblogKey := "6l3e2pGL"
+	client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callbackurl", "http://api.tumblr.com")
+	reblog := client.Reblog(blogname, map[string]string{"id": id, "reblog_key": reblogKey})
+	fmt.Println(reblog["meta"].(map[string]interface{})["status"])
+	//Output:
+	//201
+}
