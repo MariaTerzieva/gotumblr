@@ -9,7 +9,7 @@ A Go Tumblr API v2 Client.
 Dependencies
 ------------
 
-This package uses [kurrik's oauth1a package](https://github.com/kurrik/oauth1a)
+This package uses [kurrik's oauth1a package](https://github.com/kurrik/oauth1a).
 In order to use the gotumblr package, you have to install the oauth1a package like this:
 
 `go get github.com/kurrik/oauth1a`
@@ -24,7 +24,7 @@ Using the package
 
 To use this package in your projects do this (after install):
 
-`import github.com/MariaTerzieva/gotumblr`
+`import "github.com/MariaTerzieva/gotumblr"`
 
 You are going to need a consumer key, consumer secret, callback URL, token and token secret.
 You can get the consumer key, consumer secret and callback URL by registering a Tumblr application.
