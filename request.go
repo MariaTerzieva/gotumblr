@@ -1,21 +1,22 @@
 package gotumblr
 
 import (
-	"fmt"
-	"strings"
-	"net/url"
-	"net/http"
-	"io/ioutil"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"strings"
+
 	"github.com/kurrik/oauth1a"
 )
 
 //Make queries to the Tumblr API through TumblrRequest
 type TumblrRequest struct {
-	service *oauth1a.Service
+	service    *oauth1a.Service
 	userConfig *oauth1a.UserConfig
-	host string
-	apiKey string
+	host       string
+	apiKey     string
 }
 
 //Initializes the TumblrRequest.
@@ -34,7 +35,7 @@ func NewTumblrRequest(consumerKey, consumerSecret, oauthToken, oauthSecret, call
 			ConsumerKey:    consumerKey,
 			ConsumerSecret: consumerSecret,
 			CallbackURL:    callbackUrl,
-	    },
+		},
 		Signer: new(oauth1a.HmacSha1Signer),
 	}
 	userConfig := oauth1a.NewAuthorizedConfig(oauthToken, oauthSecret)
@@ -43,14 +44,14 @@ func NewTumblrRequest(consumerKey, consumerSecret, oauthToken, oauthSecret, call
 
 //Make a GET request to the API with properly formatted parameters
 //requestUrl: the url you are making the request to
-//params: the parameters needed for the request 
+//params: the parameters needed for the request
 func (tr *TumblrRequest) Get(requestUrl string, params map[string]string) map[string]interface{} {
 	full_url := tr.host + requestUrl
 	if len(params) != 0 {
 		values := url.Values{}
 		for key, value := range params {
 			values.Set(key, value)
-			full_url = full_url + "?" + values.Encode() 
+			full_url = full_url + "?" + values.Encode()
 		}
 	}
 	httpRequest, err := http.NewRequest("GET", full_url, nil)
@@ -129,5 +130,5 @@ func (tr *TumblrRequest) PostMultipart(requestUrl string, params map[string]stri
 //fields: the parameters used in the request
 //files: a list of lists containing information about the files
 func (tr *TumblrRequest) EncodeMultipartFormdata(fields map[string]string, files []string) (string, string) {
-	return "",""
+	return "", ""
 }
