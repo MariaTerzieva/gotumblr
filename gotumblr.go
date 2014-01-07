@@ -173,7 +173,9 @@ func (trc *TumblrRestClient) Follow(blogname string) map[string]interface{} {
 //Unfollow the url of a given blog
 //blogname: the url of the blog to unfollow
 func (trc *TumblrRestClient) Unfollow(blogname string) map[string]interface{} {
-	return map[string]interface{}{}
+	requestUrl := fmt.Sprintf("/v2/user/unfollow")
+	params := map[string]string{"url": blogname}
+	return trc.request.Post(requestUrl, params, []string{})
 }
 
 //Like post of a given blog
