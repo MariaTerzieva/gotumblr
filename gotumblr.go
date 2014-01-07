@@ -149,7 +149,8 @@ func (trc *TumblrRestClient) Queue(blogname string, options map[string]string) m
 //options can be:
 //filter: specify posts' format(e.g. format="html", format="text", format="raw")
 func (trc *TumblrRestClient) Drafts(blogname string, options map[string]string) map[string]interface{} {
-	return map[string]interface{}{}
+	requestUrl := fmt.Sprintf("/v2/blog/%s/posts/draft", blogname)
+	return trc.request.Get(requestUrl, options)
 }
 
 //Retrieve submission posts
