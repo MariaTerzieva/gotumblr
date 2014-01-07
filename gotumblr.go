@@ -131,7 +131,8 @@ func (trc *TumblrRestClient) Followers(blogname string, options map[string]strin
 //limit: how many likes do you want to get
 //offset: the number of the like you want to start from
 func (trc *TumblrRestClient) BlogLikes(blogname string, options map[string]string) map[string]interface{} {
-	return map[string]interface{}{}
+	requestUrl := fmt.Sprintf("/v2/blog/%s/likes", blogname)
+	return trc.request.Get(requestUrl, options)
 }
 
 //Gets posts that are currently in the blog's queue
