@@ -4,7 +4,7 @@ gotumblr
 Description
 -----------
 
-A Go Tumblr API v2 Client.
+A Go [Tumblr API](http://www.tumblr.com/docs/en/api/v2) v2 Client.
 
 Install gotumblr
 ----------------
