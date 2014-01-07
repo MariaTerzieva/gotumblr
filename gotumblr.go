@@ -34,9 +34,8 @@ func (trc *TumblrRestClient) Avatar(blogname string, size int) map[string]interf
 	if err != nil {
 		fmt.Println(err)
 	}
-	var httpResponse *http.Response
 	transport := &http.Transport{}
-	httpResponse, err2 = transport.RoundTrip(httpRequest)
+	httpResponse, err2 := transport.RoundTrip(httpRequest)
 	if err2 != nil {
 		fmt.Println(err2)
 	}
@@ -98,10 +97,11 @@ func (trc *TumblrRestClient) Tagged(tag string, options map[string]string) map[s
 //offset: the number of the post you want to start from
 //filter: return only posts with a specific format(e.g. html, text, raw)
 func (trc *TumblrRestClient) Posts(blogname, postsType string, options map[string]string) map[string]interface{} {
+	var requestUrl string
 	if postsType == "" {
-		requestUrl := fmt.Sprintf("/v2/blog/%s/posts", blogname)
+		requestUrl = fmt.Sprintf("/v2/blog/%s/posts", blogname)
 	} else {
-		requestUrl := fmt.Sprintf("/v2/blog/%s/posts/%s", blogname, postsType)
+		requestUrl = fmt.Sprintf("/v2/blog/%s/posts/%s", blogname, postsType)
 	}
 	options["api_key"] = trc.request.apiKey
 	return trc.request.Get(requestUrl, options)
@@ -166,7 +166,7 @@ func (trc *TumblrRestClient) Follow(blogname string) map[string]interface{} {
 //Unfollow the url of a given blog
 //blogname: the url of the blog to unfollow
 func (trc *TumblrRestClient) Unfollow(blogname string) map[string]interface{} {
-	return map[sting]interface{}{}
+	return map[string]interface{}{}
 }
 
 //Like post of a given blog
