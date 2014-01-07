@@ -1,3 +1,5 @@
+//A Go Tumblr API v2 Client.
+
 package gotumblr
 
 import (
@@ -11,7 +13,7 @@ import (
 	"github.com/kurrik/oauth1a"
 )
 
-//Make queries to the Tumblr API through TumblrRequest
+//Make queries to the Tumblr API through TumblrRequest.
 type TumblrRequest struct {
 	service    *oauth1a.Service
 	userConfig *oauth1a.UserConfig
@@ -20,12 +22,12 @@ type TumblrRequest struct {
 }
 
 //Initializes the TumblrRequest.
-//consumerKey is the consumer key of your Tumblr Application
-//consumerSecret is the consumer secret of your Tumblr Application
-//callbackUrl is the callback URL of your Tumblr Application
-//oauthToken is the user specific token, received from the /access_token endpoint
-//oauthSecret is the user specific secret, received from the /access_token endpoint
-//host is the host that you are tryng to send information to (e.g. http://api.tumblr.com)
+//consumerKey is the consumer key of your Tumblr Application.
+//consumerSecret is the consumer secret of your Tumblr Application.
+//callbackUrl is the callback URL of your Tumblr Application.
+//oauthToken is the user specific token, received from the /access_token endpoint.
+//oauthSecret is the user specific secret, received from the /access_token endpoint.
+//host is the host that you are tryng to send information to (e.g. http://api.tumblr.com).
 func NewTumblrRequest(consumerKey, consumerSecret, oauthToken, oauthSecret, callbackUrl, host string) *TumblrRequest {
 	service := &oauth1a.Service{
 		RequestURL:   "http://www.tumblr.com/oauth/request_token",
@@ -42,9 +44,9 @@ func NewTumblrRequest(consumerKey, consumerSecret, oauthToken, oauthSecret, call
 	return &TumblrRequest{service, userConfig, host, consumerKey}
 }
 
-//Make a GET request to the API with properly formatted parameters
-//requestUrl: the url you are making the request to
-//params: the parameters needed for the request
+//Make a GET request to the API with properly formatted parameters.
+//requestUrl: the url you are making the request to.
+//params: the parameters needed for the request.
 func (tr *TumblrRequest) Get(requestUrl string, params map[string]string) map[string]interface{} {
 	full_url := tr.host + requestUrl
 	if len(params) != 0 {
@@ -70,13 +72,13 @@ func (tr *TumblrRequest) Get(requestUrl string, params map[string]string) map[st
 	if err3 != nil {
 		fmt.Println(err3)
 	}
-	return tr.JsonParse(body)
+	return tr.JSONParse(body)
 }
 
-//Makes a POST request to the API, allows for multipart data uploads
-//requestUrl: the url you are making the request to
-//params: all the parameters needed for the request
-//files: list of files
+//Makes a POST request to the API, allows for multipart data uploads.
+//requestUrl: the url you are making the request to.
+//params: all the parameters needed for the request.
+//files: list of files.
 func (tr *TumblrRequest) Post(requestUrl string, params map[string]string, files []string) map[string]interface{} {
 	full_url := tr.host + requestUrl
 	if len(files) != 0 {
@@ -103,13 +105,13 @@ func (tr *TumblrRequest) Post(requestUrl string, params map[string]string, files
 		if err3 != nil {
 			fmt.Println(err3)
 		}
-		return tr.JsonParse(body)
+		return tr.JSONParse(body)
 	}
 }
 
 //Parse JSON response.
-//content: the content returned from the web request to be parsed as JSON
-func (tr *TumblrRequest) JsonParse(content []byte) map[string]interface{} {
+//content: the content returned from the web request to be parsed as JSON.
+func (tr *TumblrRequest) JSONParse(content []byte) map[string]interface{} {
 	data := map[string]interface{}{}
 	err := json.Unmarshal(content, &data)
 	if err != nil {
@@ -118,17 +120,17 @@ func (tr *TumblrRequest) JsonParse(content []byte) map[string]interface{} {
 	return data
 }
 
-//Generates and makes a multipart request for data files
-//requestUrl: the url you are making the request to
-//params: all parameters needed for the request
-//files: a list of files
+//Generates and makes a multipart request for data files.
+//requestUrl: the url you are making the request to.
+//params: all parameters needed for the request.
+//files: a list of files.
 func (tr *TumblrRequest) PostMultipart(requestUrl string, params map[string]string, files []string) map[string]interface{} {
 	return map[string]interface{}{}
 }
 
-//Properly encodes the multipart body of the request
-//fields: the parameters used in the request
-//files: a list of lists containing information about the files
+//Properly encodes the multipart body of the request.
+//fields: the parameters used in the request.
+//files: a list of lists containing information about the files.
 func (tr *TumblrRequest) EncodeMultipartFormdata(fields map[string]string, files []string) (string, string) {
 	return "", ""
 }
