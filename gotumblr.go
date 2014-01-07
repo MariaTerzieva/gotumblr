@@ -181,15 +181,19 @@ func (trc *TumblrRestClient) Unfollow(blogname string) map[string]interface{} {
 //Like post of a given blog
 //id: the id of the post you want to like
 //reblog_key: the reblog key for the post id
-func (trc *TumblrRestClient) Like(id int, reblogKey string) map[string]interface{} {
-	return map[string]interface{}{}
+func (trc *TumblrRestClient) Like(id, reblogKey string) map[string]interface{} {
+	requestUrl := fmt.Sprintf("/v2/user/like")
+	params := map[string]string{"id": id, "reblog_key": reblogKey}
+	return trc.request.Post(requestUrl, params, []string{})
 }
 
 //Unlike a post of a given blog
 //id: the id of the post you want to unlike
 //reblog_key: the reblog key for the post id
-func (trc *TumblrRestClient) Unlike(id int, reblogKey string) map[string]interface{} {
-	return map[string]interface{}{}
+func (trc *TumblrRestClient) Unlike(id, reblogKey string) map[string]interface{} {
+	requestUrl := fmt.Sprintf("/v2/user/unlike")
+	params := map[string]string{"id": id, "reblog_key": reblogKey}
+	return trc.request.Post(requestUrl, params, []string{})
 }
 
 //Create a photo post or photoset on a blog
