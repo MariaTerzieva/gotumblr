@@ -6,14 +6,6 @@ Description
 
 A Go Tumblr API v2 Client.
 
-Dependencies
-------------
-
-This package uses [kurrik's oauth1a package](https://github.com/kurrik/oauth1a).
-In order to use the gotumblr package, you have to install the oauth1a package like this:
-
-`go get github.com/kurrik/oauth1a`
-
 Install gotumblr
 ----------------
 
