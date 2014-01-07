@@ -29,7 +29,115 @@ Click on it and you will get your token and token secret but if you want, you ca
 Examples
 --------
 
-For examples on how to work with this API check out the `example_test.go` file in this repository.
+First import the package in your project as shown above.
+
+Then create NewTublrRestClient with your credentials(consumer key, consumer secret, token, token secret and callback url):
+
+`client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callback_url", "http://api.tumblr.com")`
+
+Then use the client you just created to get the information you need. Here are some examples:
+
+		info := client.Info()
+		fmt.Println(info["response"].(map[string]interface{})["blog"].(map[string]interface{})["name"])
+		//Output:
+		//the name of the user's blog (e.g. blogname in blogname.tumblr.com)
+
+		likes := client.Likes(map[string]string{})
+		fmt.Println(likes["response"].(map[string]interface{})["liked_count"])
+		//Output:
+		//the count of the posts the user has liked
+
+		following := client.Following(map[string]string{})
+		fmt.Println(following["response"].(map[string]interface{})["total_blogs"])
+		//Output:
+		//the number of the blogs the user is following
+
+		dashboard := client.Dashboard(map[string]string{"limit": "1"})
+		fmt.Println(dashboard["response"].(map[string]interface{})["blog"].(map[string]interface{})["state"])
+		//Output:
+		//published
+
+		tagged := client.Tagged("golang", map[string]string{"limit": "1"})
+		fmt.Println(tagged["response"].(map[string]interface{})["blog"].(map[string]interface{})["state"])
+		//Output:
+		//published
+
+		blogname := "example.tumblr.com" //please change the blogname according to your credentials
+		blogInfo := client.BlogInfo(blogname)
+		fmt.Println(blogInfo["response"].(map[string]interface{})["blog"].(map[string]interface{})["title"])
+		//Output:
+		//the title of the blog
+
+		blogname := "example.tumblr.com" //please change the blogname according to your credentials
+		followers := client.Followers(blogname, map[string]string{})
+		fmt.Println(followers["response"].(map[string]interface{})["total_users"])
+		//Output:
+		//the number of all followers of the blog
+
+		blogname := "example.tumblr.com" //please change the blogname according to your credentials 
+		likes := client.BlogLikes(blogname, map[string]string{})
+		fmt.Println(likes["response"].(map[string]interface{})["liked_count"])
+		//Output:
+		//the number of all blog likes
+
+		blogname := "example.tumblr.com" //please change the blogname according to your credentials 
+		queue := client.Queue(blogname, map[string]string{})
+		fmt.Println(queue["response"].(map[string]interface{})["posts"])
+		//Output:
+		//an interface of all posts in the queue
+
+
+		blogname := "example.tumblr.com" //please change the blogname according to your credentials
+		drafts := client.Drafts(blogname, map[string]string{})
+		fmt.Println(drafts["response"].(map[string]interface{})["posts"])
+		//Output:
+		//an interface of all posts in the drafts section
+
+		blogname := "example.tumblr.com" //please change the blogname according to your credentials
+		submission := client.Submission(blogname, map[string]string{})
+		fmt.Println(submission["response"].(map[string]interface{})["posts"])
+		//Output:
+		//an interface of all posts in the submissions section
+
+		blogname := "example.tumblr.com" //please change the blogname according to your credentials
+		avatar := client.Avatar(blogname, 64)
+		fmt.Println(avatar["meta"].(map[string]interface{})["status"])
+		//Output:
+		//301
+
+		blogname := "mgterzieva.tumblr.com"
+		follow := client.Follow(blogname)
+		fmt.Println(follow["meta"].(map[string]interface{})["status"])
+		//Output:
+		//200
+
+		blogname := "mgterzieva.tumblr.com"
+		unfollow := client.Unfollow(blogname)
+		fmt.Println(unfollow["meta"].(map[string]interface{})["status"])
+		//Output:
+		//200
+
+		id := "72078164824"
+		reblogKey := "6l3e2pGL"
+		like := client.Like(id, reblogKey)
+		fmt.Println(like["meta"].(map[string]interface{})["status"])
+		//Output:
+		//200
+
+		id := "72078164824"
+		reblogKey := "6l3e2pGL"
+		unlike := client.Unlike(id, reblogKey)
+		fmt.Println(unlike["meta"].(map[string]interface{})["status"])
+		//Output:
+		//200
+
+		blogname := "example.tumblr.com" //please change the blogname according to your credentials
+		id := "72078164824"
+		reblogKey := "6l3e2pGL"
+		reblog := client.Reblog(blogname, map[string]string{"id": id, "reblog_key": reblogKey})
+		fmt.Println(reblog["meta"].(map[string]interface{})["status"])
+		//Output:
+		//201
 
 License
 -------
