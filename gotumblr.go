@@ -141,7 +141,8 @@ func (trc *TumblrRestClient) BlogLikes(blogname string, options map[string]strin
 //offset: post number to start at
 //filter: specify posts' format(e.g. format="html", format="text", format="raw")
 func (trc *TumblrRestClient) Queue(blogname string, options map[string]string) map[string]interface{} {
-	return map[string]interface{}{}
+	requestUrl := fmt.Sprintf("/v2/blog/%s/posts/queue", blogname)
+	return trc.request.Get(requestUrl, options)
 }
 
 //Gets posts that are currently in the blog's drafts
