@@ -121,7 +121,8 @@ func (trc *TumblrRestClient) BlogInfo(blogname string) map[string]interface{} {
 //limit: the number of results to return, inclusive
 //offset: result to start at
 func (trc *TumblrRestClient) Followers(blogname string, options map[string]string) map[string]interface{} {
-	return map[string]interface{}{}
+	requestUrl := fmt.Sprintf("/v2/blog/%s/followers", blogname)
+	return trc.request.Get(requestUrl, options)
 }
 
 //Gets the likes of blog given
