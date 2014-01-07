@@ -158,7 +158,8 @@ func (trc *TumblrRestClient) Drafts(blogname string, options map[string]string) 
 //offset: post number to start at
 //filter: specify posts' format(e.g. format="html", format="text", format="raw")
 func (trc *TumblrRestClient) Submission(blogname string, options map[string]string) map[string]interface{} {
-	return map[string]interface{}{}
+	requestUrl := fmt.Sprintf("/v2/blog/%s/posts/submission", blogname)
+	return trc.request.Get(requestUrl, options)
 }
 
 //Follow the url of a given blog
