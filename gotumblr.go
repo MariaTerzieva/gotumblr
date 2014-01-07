@@ -132,7 +132,7 @@ func (trc *TumblrRestClient) Followers(blogname string, options map[string]strin
 //offset: the number of the like you want to start from
 func (trc *TumblrRestClient) BlogLikes(blogname string, options map[string]string) map[string]interface{} {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/likes", blogname)
-	options["api_key"] = trc.reqest.apiKey 
+	options["api_key"] = trc.request.apiKey 
 	return trc.request.Get(requestUrl, options)
 }
 
