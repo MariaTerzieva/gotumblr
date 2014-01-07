@@ -33,7 +33,7 @@ First import the package in your project as shown above.
 
 Then create NewTublrRestClient with your credentials(consumer key, consumer secret, token, token secret and callback url):
 
-`client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callback_url", "http://api.tumblr.com")`
+		client := gotumblr.NewtumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callback_url", "http://api.tumblr.com")
 
 Then use the client you just created to get the information you need. Here are some examples:
 
