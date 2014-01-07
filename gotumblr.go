@@ -165,7 +165,9 @@ func (trc *TumblrRestClient) Submission(blogname string, options map[string]stri
 //Follow the url of a given blog
 //blogname: the url of the blog to follow
 func (trc *TumblrRestClient) Follow(blogname string) map[string]interface{} {
-	return map[string]interface{}{}
+	requestUrl := fmt.Sprintf("/v2/user/follow")
+	params := map[string]string{"url": blogname}
+	return trc.request.Post(requestUrl, params, []string{})
 }
 
 //Unfollow the url of a given blog
