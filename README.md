@@ -37,4 +37,4 @@ Click on it and you will get your token and token secret but if you want, you ca
 Examples
 --------
 
-For examples how to work with the API see the `example_test.go` file in this repository.
+For examples on how to work with this API check out the `example_test.go` file in this repository.
