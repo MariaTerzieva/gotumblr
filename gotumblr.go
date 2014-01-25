@@ -214,7 +214,7 @@ func (trc *TumblrRestClient) Unlike(id, reblogKey string) map[string]interface{}
 //caption: the caption that you want applied to the photo;
 //link: the 'click-through' url for the photo;
 //*source: the photo source url(either source or data);
-//*data: one or more image files(wither source or data).
+//*data: one or more image files(either source or data).
 func (trc *TumblrRestClient) CreatePhoto(blogname string, options map[string]string) map[string]interface{} {
 	return map[string]interface{}{}
 }
