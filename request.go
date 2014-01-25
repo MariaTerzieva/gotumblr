@@ -48,15 +48,15 @@ func NewTumblrRequest(consumerKey, consumerSecret, oauthToken, oauthSecret, call
 //requestUrl: the url you are making the request to.
 //params: the parameters needed for the request.
 func (tr *TumblrRequest) Get(requestUrl string, params map[string]string) map[string]interface{} {
-	full_url := tr.host + requestUrl
+	fullUrl := tr.host + requestUrl
 	if len(params) != 0 {
 		values := url.Values{}
 		for key, value := range params {
 			values.Set(key, value)
-			full_url = full_url + "?" + values.Encode()
 		}
+		fullUrl = fullUrl + "?" + values.Encode()
 	}
-	httpRequest, err := http.NewRequest("GET", full_url, nil)
+	httpRequest, err := http.NewRequest("GET", fullUrl, nil)
 	if err != nil {
 		fmt.Println(err)
 	}
