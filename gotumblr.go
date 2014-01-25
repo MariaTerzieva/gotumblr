@@ -85,6 +85,7 @@ func (trc *TumblrRestClient) Dashboard(options map[string]string) map[string]int
 //filter: the post format you want to get(e.g html, text, raw).
 func (trc *TumblrRestClient) Tagged(tag string, options map[string]string) map[string]interface{} {
 	options["tag"] = tag
+	options["api_key"] = trc.request.apiKey
 	return trc.request.Get("/v2/tagged", options)
 }
 
