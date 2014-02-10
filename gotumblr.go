@@ -311,7 +311,8 @@ func (trc *TumblrRestClient) CreateChatPost(blogname string, options map[string]
 //*external_url: the url of the site that hosts the audio file(either external_url or data);
 //*data: the local filename path to the audio you are uploading(either external_url or data).
 func (trc *TumblrRestClient) CreateAudio(blogname string, options map[string]string) map[string]interface{} {
-	return map[string]interface{}{}
+	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
+	trc.request.Post(requestUrl, options, []string{})
 }
 
 //Create a video post on a blog.
