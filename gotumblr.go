@@ -346,7 +346,9 @@ func (trc *TumblrRestClient) Reblog(blogname string, options map[string]string) 
 //blogname: the url of the blog you want to delete from.
 //id: the id of the post you want to delete.
 func (trc *TumblrRestClient) DeletePost(blogname, id string) map[string]interface{} {
-	return map[string]interface{}{}
+	requestUrl := fmt.Sprintf("/v2/blog/%s/post/delete", blogname)
+	params := map[string]string{"id": id}
+	trc.request.Post(requestUrl, params, string[]{}) 
 }
 
 //Edits a post with a given id.
