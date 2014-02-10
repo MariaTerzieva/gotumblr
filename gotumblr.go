@@ -329,7 +329,8 @@ func (trc *TumblrRestClient) CreateAudio(blogname string, options map[string]str
 //*embed: the html embed code for the video(either embed or data);
 //*data: the local filename path to the video you are uploading(either embed or data).
 func (trc *TumblrRestClient) CreateVideo(blogname string, options map[string]string) map[string]interface{} {
-	return map[string]interface{}{}
+	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
+	trc.request.Post(requestUrl, options, []string{})
 }
 
 //Creates a reblog on the given blog.
