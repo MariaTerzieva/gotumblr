@@ -308,7 +308,7 @@ func (trc *TumblrRestClient) CreateChatPost(blogname string, options map[string]
 //format: sets the format type of the post(html or markdown);
 //slug: add a short text summary to the end of the post url;
 //caption: the caption of the post;
-//*external_url: the url of the site that hosts the oudio file(either external_url or data);
+//*external_url: the url of the site that hosts the audio file(either external_url or data);
 //*data: the local filename path to the audio you are uploading(either external_url or data).
 func (trc *TumblrRestClient) CreateAudio(blogname string, options map[string]string) map[string]interface{} {
 	return map[string]interface{}{}
@@ -360,6 +360,8 @@ func (trc *TumblrRestClient) DeletePost(blogname, id string) map[string]interfac
 //format: sets the format type of the post(html or markdown);
 //slug: add a short text summary to the end of the post url;
 //*id: the id of the post.
+//The other options are specific to the type of post you want to edit.
 func (trc *TumblrRestClient) EditPost(blogname string, options map[string]string) map[string]interface{} {
-	return map[string]interface{}{}
+	requestUrl := fmt.Sprintf("/v2/blog/%s/post/edit", blogname)
+	return trc.request.Post(requestUrl, options, []string{})
 }
