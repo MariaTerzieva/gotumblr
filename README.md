@@ -139,6 +139,67 @@ Then use the client you just created to get the information you need. Here are s
 		//Output:
 		//201
 
+		blogname := "example.tumblr.com" //please change the blogname according to your credentials
+		textPost := client.CreateText(blogname, map[string]string{"body": "Hello world!"})
+		fmt.Println(textPost["meta"].(map[string]interface{})["status"])
+		//Output:
+		//201
+
+		blogname := "example.tumblr.com" //please change the blogname according to your credentials
+		quotePost := client.CreateQuote(blogname, map[string]string{"quote": "A happy heart makes the face cheerful."})
+		fmt.Println(quotePost["meta"].(map[string]interface{})["status"])
+		//Output:
+		//201
+
+		blogname := "example.tumblr.com" //please change the blogname according to your credentials
+		linkPost := client.CreateLink(blogname, map[string]string{"url": "http://mgterzieva.tumblr.com"})
+		fmt.Println(linkPost["meta"].(map[string]interface{})["status"])
+		//Output:
+		//201
+
+		blogname := "example.tumblr.com" //please change the blogname according to your credentials
+		conversation := "John Doe: Hi there!\nJane Doe: Hi!"
+		chatPost := client.CreateChatPost(blogname, map[string]string{"conversation": conversation})
+		fmt.Println(chatPost["meta"].(map[string]interface{})["status"])
+		//Output:
+		//201
+
+		blogname := "example.tumblr.com" //please change the blogname according to your credentials
+		id := "72078164824" //please change the id according to the blogpost
+		text := "Hello happy world!" //if you are editing a text post
+		editPost := client.EditPost(blogname, map[string]string{"id": id, "text": text})
+		fmt.Println(editPost["meta"].(map[string]interface{})["status"])
+		//Output:
+		//200
+
+		blogname := "example.tumblr.com" //please change the blogname according to your credentials
+		id := "72078164824" //please change the id according to the blogpost you want to delete
+		deletePost := client.DeletePost(blogname, id)
+		fmt.Println(deletePost["meta"].(map[string]interface{})["status"])
+		//Output:
+		//200
+
+		blogname := "example.tumblr.com" //please change the blogname according to your credentials
+		code := `<iframe width="560" height="315" src="//www.youtube.com/embed/T5OEg5paXK0" frameborder="0" allowfullscreen></iframe>`
+		embedVideo := client.CreateVideo(blogname, map[string]string{"embed": code})
+		fmt.Println(embedVideo["meta"].(map[string]interface{})["status"])
+		//Output:
+		//201
+
+		blogname := "example.tumblr.com" //please change the blogname according to your credentials
+		song := "https://soundcloud.com/tiffany-alvord-song/the-one-that-got-away-cover-by"
+		songPostByURL := client.CreateAudio(blogname, map[string]string{"external_url": song})
+		fmt.Println(songPostByURL["meta"].(map[string]interface{})["status"])
+		//Output:
+		//201
+
+		blogname := "example.tumblr.com" //please change the blogname according to your credentials
+		picture := "http://herrickshighlander.com/wp-content/uploads/2014/01/aladdin_jasmine_carpet1.jpg"
+		photoPostByURL := client.CreatePhoto(blogname, map[string]string{"source": picture})
+		fmt.Println(photoPostByURL["meta"].(map[string]interface{})["status"])
+		//Output:
+		//201
+
 License
 -------
 
