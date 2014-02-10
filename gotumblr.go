@@ -272,7 +272,9 @@ func (trc *TumblrRestClient) CreateQuote(blogname string, options map[string]str
 //*url: the link you are posting;
 //description: the description of the link you are posting.
 func (trc *TumblrRestClient) CreateLink(blogname string, options map[string]string) map[string]interface{} {
-	return map[string]interface{}{}
+	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
+	options["type"] = "link"
+	return trc.request.Post(requestUrl, options, []string{})
 }
 
 //Create a chat post on a blog.
