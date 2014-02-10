@@ -339,7 +339,8 @@ func (trc *TumblrRestClient) CreateVideo(blogname string, options map[string]str
 //*id: the id of the reblogged post;
 //*reblog_key: the reblog key of the rebloged post.
 func (trc *TumblrRestClient) Reblog(blogname string, options map[string]string) map[string]interface{} {
-	return map[string]interface{}{}
+	requestUrl := fmt.Sprintf("/v2/blog/%s/post/reblog", blogname)
+	trc.request.Post(requestUrl, options, []string{})
 }
 
 //Deletes a post with a given id.
