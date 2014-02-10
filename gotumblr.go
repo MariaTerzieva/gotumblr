@@ -233,7 +233,9 @@ func (trc *TumblrRestClient) CreatePhoto(blogname string, options map[string]str
 //title: the optional title of the post;
 //*body: the full text body.
 func (trc *TumblrRestClient) CreateText(blogname string, options map[string]string) map[string]interface{} {
-	return map[string]interface{}{}
+	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
+	options["type"] = "text"
+	return trc.request.Post(requestUrl, options, []string{})
 }
 
 //Create a quote post on a blog.
