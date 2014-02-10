@@ -216,7 +216,9 @@ func (trc *TumblrRestClient) Unlike(id, reblogKey string) map[string]interface{}
 //*source: the photo source url(either source or data);
 //*data: one or more image files(either source or data).
 func (trc *TumblrRestClient) CreatePhoto(blogname string, options map[string]string) map[string]interface{} {
-	return map[string]interface{}{}
+	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
+	options["type"] = "photo"
+	return trc.request.Post(requestUrl, options, []string{})
 }
 
 //Create a text post on a blog.
@@ -312,6 +314,7 @@ func (trc *TumblrRestClient) CreateChatPost(blogname string, options map[string]
 //*data: the local filename path to the audio you are uploading(either external_url or data).
 func (trc *TumblrRestClient) CreateAudio(blogname string, options map[string]string) map[string]interface{} {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
+	options["type"] = "audio"
 	trc.request.Post(requestUrl, options, []string{})
 }
 
@@ -331,6 +334,7 @@ func (trc *TumblrRestClient) CreateAudio(blogname string, options map[string]str
 //*data: the local filename path to the video you are uploading(either embed or data).
 func (trc *TumblrRestClient) CreateVideo(blogname string, options map[string]string) map[string]interface{} {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
+	options["type"] = "video"
 	trc.request.Post(requestUrl, options, []string{})
 }
 
