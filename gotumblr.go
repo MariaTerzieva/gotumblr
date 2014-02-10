@@ -252,7 +252,9 @@ func (trc *TumblrRestClient) CreateText(blogname string, options map[string]stri
 //*quote: the full text of the quote;
 //source: the cited source of the quote.
 func (trc *TumblrRestClient) CreateQuote(blogname string, options map[string]string) map[string]interface{} {
-	return map[string]interface{}{}
+	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
+	options["type"] = "quote"
+	return trc.request.Post(requestUrl, options, []string{})
 }
 
 //Create a link post on a blog.
