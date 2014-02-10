@@ -291,7 +291,9 @@ func (trc *TumblrRestClient) CreateLink(blogname string, options map[string]stri
 //title: the title of the chat;
 //*conversation: the text of the conversation/chat, with dialogue labels.
 func (trc *TumblrRestClient) CreateChatPost(blogname string, options map[string]string) map[string]interface{} {
-	return map[string]interface{}{}
+	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
+	options["type"] = "chat"
+	return trc.request.Post(requestUrl, options, []string{})
 }
 
 //Create an audio post on a blog.
