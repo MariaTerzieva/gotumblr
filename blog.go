@@ -1,4 +1,4 @@
-package gotumlr
+package gotumblr
 
 type blog struct {
 	Title string
