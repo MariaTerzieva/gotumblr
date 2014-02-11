@@ -315,7 +315,7 @@ func (trc *TumblrRestClient) CreateChatPost(blogname string, options map[string]
 func (trc *TumblrRestClient) CreateAudio(blogname string, options map[string]string) map[string]interface{} {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
 	options["type"] = "audio"
-	trc.request.Post(requestUrl, options, []string{})
+	return trc.request.Post(requestUrl, options, []string{})
 }
 
 //Create a video post on a blog.
@@ -335,7 +335,7 @@ func (trc *TumblrRestClient) CreateAudio(blogname string, options map[string]str
 func (trc *TumblrRestClient) CreateVideo(blogname string, options map[string]string) map[string]interface{} {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
 	options["type"] = "video"
-	trc.request.Post(requestUrl, options, []string{})
+	return trc.request.Post(requestUrl, options, []string{})
 }
 
 //Creates a reblog on the given blog.
@@ -346,7 +346,7 @@ func (trc *TumblrRestClient) CreateVideo(blogname string, options map[string]str
 //*reblog_key: the reblog key of the rebloged post.
 func (trc *TumblrRestClient) Reblog(blogname string, options map[string]string) map[string]interface{} {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post/reblog", blogname)
-	trc.request.Post(requestUrl, options, []string{})
+	return trc.request.Post(requestUrl, options, []string{})
 }
 
 //Deletes a post with a given id.
@@ -355,7 +355,7 @@ func (trc *TumblrRestClient) Reblog(blogname string, options map[string]string) 
 func (trc *TumblrRestClient) DeletePost(blogname, id string) map[string]interface{} {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post/delete", blogname)
 	params := map[string]string{"id": id}
-	trc.request.Post(requestUrl, params, []string{}) 
+	return trc.request.Post(requestUrl, params, []string{}) 
 }
 
 //Edits a post with a given id.
