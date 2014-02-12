@@ -31,7 +31,7 @@ type TumblrRequest struct {
 func NewTumblrRequest(consumerKey, consumerSecret, oauthToken, oauthSecret, callbackUrl, host string) *TumblrRequest {
 	service := &oauth1a.Service{
 		RequestURL:   "http://www.tumblr.com/oauth/request_token",
-		AuthorizeURL: "http://www.rumblr.com/oauth/authorize",
+		AuthorizeURL: "http://www.tumblr.com/oauth/authorize",
 		AccessURL:    "http://www.tumblr.com/oauth/access_token",
 		ClientConfig: &oauth1a.ClientConfig{
 			ConsumerKey:    consumerKey,
