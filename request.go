@@ -82,7 +82,7 @@ func (tr *TumblrRequest) Get(requestUrl string, params map[string]string) Comple
 func (tr *TumblrRequest) Post(requestUrl string, params map[string]string, files []string) CompleteResponse {
 	full_url := tr.host + requestUrl
 	if len(files) != 0 {
-		//return tr.PostMultipart(requestUrl, params, files)
+		return tr.PostMultipart(requestUrl, params, files)
 	} else {
 		values := url.Values{}
 		for key, value := range params {
@@ -124,8 +124,8 @@ func (tr *TumblrRequest) JSONParse(content []byte) CompleteResponse {
 //requestUrl: the url you are making the request to.
 //params: all parameters needed for the request.
 //files: a list of files.
-func (tr *TumblrRequest) PostMultipart(requestUrl string, params map[string]string, files []string) map[string]interface{} {
-	return map[string]interface{}{}
+func (tr *TumblrRequest) PostMultipart(requestUrl string, params map[string]string, files []string) CompleteResponse {
+	return CompleteResponse{}
 }
 
 //Properly encodes the multipart body of the request.
