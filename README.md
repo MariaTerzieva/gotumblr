@@ -126,7 +126,7 @@ Then use the client you just created to get the information you need. Here are s
 		id := "72078164824" //this is the id of a post of mine. Change this according to your usecase.
 		//There is an Id field in all of the post object types in this library.
 		reblogKey := "6l3e2pGL" //this is the reblogKey of a post of mine. Change this according to your usecase.
-		//There is a reblog_key field in all of the post object types in this library.
+		//There is a Reblog_key field in all of the post object types in this library.
 		like := client.Like(id, reblogKey)
 		fmt.Println(like)
 		//Output:
