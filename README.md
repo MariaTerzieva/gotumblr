@@ -37,170 +37,180 @@ Then create NewTublrRestClient with your credentials(consumer key, consumer secr
 
 		client := gotumblr.NewTumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callback_url", "http://api.tumblr.com")
 
-Then use the client you just created to get the information you need. Here are some examples:
+Then use the client you just created to get the information you need. Here are some examples with what I got for my account:
 
 		info := client.Info()
-		fmt.Println(info["response"].(map[string]interface{})["blog"].(map[string]interface{})["name"])
+		fmt.Println(info.User.Name)
 		//Output:
-		//the name of the user's blog (e.g. blogname in blogname.tumblr.com)
+		//mgterzieva
 
 		likes := client.Likes(map[string]string{})
-		fmt.Println(likes["response"].(map[string]interface{})["liked_count"])
+		fmt.Println(likes.Liked_count)
 		//Output:
-		//the count of the posts the user has liked
+		//63
 
 		following := client.Following(map[string]string{})
-		fmt.Println(following["response"].(map[string]interface{})["total_blogs"])
+		fmt.Println(following.Total_blogs)
 		//Output:
-		//the number of the blogs the user is following
+		//1
 
 		dashboard := client.Dashboard(map[string]string{"limit": "1"})
-		fmt.Println(dashboard["response"].(map[string]interface{})["blog"].(map[string]interface{})["state"])
-		//Output:
-		//published
+		if len(dashboard.Posts) != 0 {
+			var base_dashboard_post gotumblr.BasePost
+			for i, _ := range dashboard.Posts {
+				json.Unmarshal(dashboard.Posts[i], &base_dashboard_post)
+				fmt.Println(base_dashboard_post.State)
+				//Output:
+				//published
+			}
+		}
 
 		tagged := client.Tagged("golang", map[string]string{"limit": "1"})
-		fmt.Println(tagged["response"].(map[string]interface{})["blog"].(map[string]interface{})["state"])
-		//Output:
-		//published
+		if len(tagged) != 0 {
+			var base_tagged_post gotumblr.BasePost
+			for i, _ := range tagged {
+				json.Unmarshal(tagged[i], &base_tagged_post)
+				fmt.Println(base_tagged_post.State)
+				//Output:
+				//published
+			}
+		}
 
-		blogname := "example.tumblr.com" //please change the blogname according to your credentials
+		blogname := "mgterzieva.tumblr.com" //this is my blogname. Change this according to your usecase and credentials.
 		blogInfo := client.BlogInfo(blogname)
-		fmt.Println(blogInfo["response"].(map[string]interface{})["blog"].(map[string]interface{})["title"])
+		fmt.Println(blogInfo.Blog.Title)
 		//Output:
-		//the title of the blog
+		//Maria's blog
 
-		blogname := "example.tumblr.com" //please change the blogname according to your credentials
 		followers := client.Followers(blogname, map[string]string{})
-		fmt.Println(followers["response"].(map[string]interface{})["total_users"])
+		fmt.Println(followers.Total_users)
 		//Output:
-		//the number of all followers of the blog
+		//0
 
-		blogname := "example.tumblr.com" //please change the blogname according to your credentials 
-		likes := client.BlogLikes(blogname, map[string]string{})
-		fmt.Println(likes["response"].(map[string]interface{})["liked_count"])
+		blog_likes := client.BlogLikes(blogname, map[string]string{})
+		fmt.Println(blog_likes.Liked_count)
 		//Output:
-		//the number of all blog likes
+		//63
 
-		blogname := "example.tumblr.com" //please change the blogname according to your credentials 
 		queue := client.Queue(blogname, map[string]string{})
-		fmt.Println(queue["response"].(map[string]interface{})["posts"])
+		fmt.Println(len(queue.Posts))
 		//Output:
-		//an interface of all posts in the queue
+		//0
 
-
-		blogname := "example.tumblr.com" //please change the blogname according to your credentials
 		drafts := client.Drafts(blogname, map[string]string{})
-		fmt.Println(drafts["response"].(map[string]interface{})["posts"])
+		fmt.Println(len(drafts.Posts))
 		//Output:
-		//an interface of all posts in the drafts section
+		//6
 
-		blogname := "example.tumblr.com" //please change the blogname according to your credentials
 		submission := client.Submission(blogname, map[string]string{})
-		fmt.Println(submission["response"].(map[string]interface{})["posts"])
+		fmt.Println(len(submission.Posts))
 		//Output:
-		//an interface of all posts in the submissions section
+		//0
 
-		blogname := "example.tumblr.com" //please change the blogname according to your credentials
 		avatar := client.Avatar(blogname, 64)
-		fmt.Println(avatar["meta"].(map[string]interface{})["status"])
+		fmt.Println(avatar.Avatar_url)
 		//Output:
-		//301
+		//http://25.media.tumblr.com/avatar_49f49d0b9209_64.png
 
-		blogname := "mgterzieva.tumblr.com"
-		follow := client.Follow(blogname)
-		fmt.Println(follow["meta"].(map[string]interface{})["status"])
+		other_blogname := "http://thehungergamesmovie.tumblr.com"
+		follow := client.Follow(other_blogname)
+		fmt.Println(follow)
 		//Output:
-		//200
+		//<nil>
 
-		blogname := "mgterzieva.tumblr.com"
-		unfollow := client.Unfollow(blogname)
-		fmt.Println(unfollow["meta"].(map[string]interface{})["status"])
+		unfollow := client.Unfollow(other_blogname)
+		fmt.Println(unfollow)
 		//Output:
-		//200
+		//<nil>
 
-		id := "72078164824"
-		reblogKey := "6l3e2pGL"
+		id := "72078164824" //this is the id of a post of mine. Change this according to your usecase.
+		//There is an Id field in all of the post object types in this library.
+		reblogKey := "6l3e2pGL" //this is the reblogKey of a post of mine. Change this according to your usecase.
+		//There is a reblog_key field in all of the post object types in this library.
 		like := client.Like(id, reblogKey)
-		fmt.Println(like["meta"].(map[string]interface{})["status"])
+		fmt.Println(like)
 		//Output:
-		//200
+		//<nil>
 
-		id := "72078164824"
-		reblogKey := "6l3e2pGL"
 		unlike := client.Unlike(id, reblogKey)
-		fmt.Println(unlike["meta"].(map[string]interface{})["status"])
+		fmt.Println(unlike)
 		//Output:
-		//200
+		//<nil>
 
-		blogname := "example.tumblr.com" //please change the blogname according to your credentials
-		id := "72078164824"
-		reblogKey := "6l3e2pGL"
 		reblog := client.Reblog(blogname, map[string]string{"id": id, "reblog_key": reblogKey})
-		fmt.Println(reblog["meta"].(map[string]interface{})["status"])
+		fmt.Println(reblog)
 		//Output:
-		//201
+		//<nil>
 
-		blogname := "example.tumblr.com" //please change the blogname according to your credentials
-		textPost := client.CreateText(blogname, map[string]string{"body": "Hello world!"})
-		fmt.Println(textPost["meta"].(map[string]interface{})["status"])
+		state := "draft"
+		textPost := client.CreateText(blogname, map[string]string{"body": "Hello happy world!", "state": state})
+		fmt.Println(textPost)
 		//Output:
-		//201
+		//<nil>
 
-		blogname := "example.tumblr.com" //please change the blogname according to your credentials
-		quotePost := client.CreateQuote(blogname, map[string]string{"quote": "A happy heart makes the face cheerful."})
-		fmt.Println(quotePost["meta"].(map[string]interface{})["status"])
+		quote := "A happy heart makes the face cheerful."
+		source := "Proverbs 15:13"
+		quotePost := client.CreateQuote(blogname, map[string]string{"quote": quote, "source": source, "state": state})
+		fmt.Println(quotePost)
 		//Output:
-		//201
+		//<nil>
 
-		blogname := "example.tumblr.com" //please change the blogname according to your credentials
-		linkPost := client.CreateLink(blogname, map[string]string{"url": "http://mgterzieva.tumblr.com"})
-		fmt.Println(linkPost["meta"].(map[string]interface{})["status"])
+		title := "Follow me on tumblr, guys! :)"
+		url := "http://mgterzieva.tumblr.com"
+		linkPost := client.CreateLink(blogname, map[string]string{"url": url, "title": title, "state": state})
+		fmt.Println(linkPost)
 		//Output:
-		//201
+		//<nil>
 
-		blogname := "example.tumblr.com" //please change the blogname according to your credentials
-		conversation := "John Doe: Hi there!\nJane Doe: Hi!"
-		chatPost := client.CreateChatPost(blogname, map[string]string{"conversation": conversation})
-		fmt.Println(chatPost["meta"].(map[string]interface{})["status"])
+		conversation := "John Doe: Hi there!\nJane Doe: Hi, John!\nJane Doe: ♥♥♥"
+		//separate the tags with commas and don't leave whitespaces around the commas
+		tags := "Saint Valentine's day,14th of February,lots of love,xoxo"
+		chatPost := client.CreateChatPost(blogname, map[string]string{"conversation": conversation, "tags": tags, "state": state})
+		fmt.Println(chatPost)
 		//Output:
-		//201
+		//<nil>
 
-		blogname := "example.tumblr.com" //please change the blogname according to your credentials
-		id := "72078164824" //please change the id according to the blogpost
 		text := "Hello happy world!" //if you are editing a text post
-		editPost := client.EditPost(blogname, map[string]string{"id": id, "text": text})
-		fmt.Println(editPost["meta"].(map[string]interface{})["status"])
+		editPost := client.EditPost(blogname, map[string]string{"id": id, "body": text})
+		fmt.Println(editPost)
 		//Output:
-		//200
+		//<nil>
 
-		blogname := "example.tumblr.com" //please change the blogname according to your credentials
-		id := "72078164824" //please change the id according to the blogpost you want to delete
 		deletePost := client.DeletePost(blogname, id)
-		fmt.Println(deletePost["meta"].(map[string]interface{})["status"])
+		fmt.Println(deletePost)
 		//Output:
-		//200
+		//<nil>
 
-		blogname := "example.tumblr.com" //please change the blogname according to your credentials
-		code := `<iframe width="560" height="315" src="//www.youtube.com/embed/T5OEg5paXK0" frameborder="0" allowfullscreen></iframe>`
-		embedVideo := client.CreateVideo(blogname, map[string]string{"embed": code})
-		fmt.Println(embedVideo["meta"].(map[string]interface{})["status"])
+		code := `<iframe width="560" height="315" src="//www.youtube.com/embed/uJNvZRAmeqY" frameborder="0" allowfullscreen></iframe>`
+		caption := "<b>Mother knows best</b>"
+		embedVideo := client.CreateVideo(blogname, map[string]string{"embed": code, "state": state, "caption": caption})
+		fmt.Println(embedVideo)
 		//Output:
-		//201
+		//<nil>
 
-		blogname := "example.tumblr.com" //please change the blogname according to your credentials
 		song := "https://soundcloud.com/tiffany-alvord-song/the-one-that-got-away-cover-by"
-		songPostByURL := client.CreateAudio(blogname, map[string]string{"external_url": song})
-		fmt.Println(songPostByURL["meta"].(map[string]interface{})["status"])
+		songPostByURL := client.CreateAudio(blogname, map[string]string{"external_url": song, "state": state})
+		fmt.Println(songPostByURL)
 		//Output:
-		//201
+		//<nil>
 
-		blogname := "example.tumblr.com" //please change the blogname according to your credentials
-		picture := "http://herrickshighlander.com/wp-content/uploads/2014/01/aladdin_jasmine_carpet1.jpg"
-		photoPostByURL := client.CreatePhoto(blogname, map[string]string{"source": picture})
-		fmt.Println(photoPostByURL["meta"].(map[string]interface{})["status"])
+		picture := "http://thumbs.dreamstime.com/z/cute-panda-17976617.jpg"
+		photoPostByURL := client.CreatePhoto(blogname, map[string]string{"source": picture, "state": state})
+		fmt.Println(photoPostByURL)
 		//Output:
-		//201
+		//<nil>
+
+Further information
+-------------------
+
+If you still don't get how to work with this package don't worry! :)
+Read the [project documentation](https://godoc.org/github.com/MariaTerzieva/gotumblr) or
+the [Tumblr API](http://www.tumblr.com/docs/en/api/v2) or
+write an e-mail at mgterzieva@abv.bg if these don't help. :)
+
+Contribution
+------------
+In case you find any issues with this code, use the project's Issues page to report them or send pull requests.
 
 License
 -------
