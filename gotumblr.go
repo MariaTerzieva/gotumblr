@@ -36,7 +36,7 @@ func (trc *TumblrRestClient) Info() UserInfoResponse {
 //Retrieves the url of the blog's avatar.
 //size can be: 16, 24, 30, 40, 48, 64, 96, 128 or 512.
 func (trc *TumblrRestClient) Avatar(blogname string, size int) AvatarResponse {
-	requestUrl := fmt.Sprintf("http://api.tumblr.com/v2/blog/%s/avatar/%d", blogname, size)
+	requestUrl := trc.request.host + fmt.Sprintf("/v2/blog/%s/avatar/%d", blogname, size)
 	httpRequest, err := http.NewRequest("GET", requestUrl, nil)
 	if err != nil {
 		fmt.Println(err)
