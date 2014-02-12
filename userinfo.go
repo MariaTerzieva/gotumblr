@@ -1,9 +1,9 @@
 package gotumblr
 
-type userInfo struct {
-	Following int64
+type UserInfo struct {
+	Following           int64
 	Default_post_format string
-	Name string
-	Likes int64
-	Blogs []ownedBlog
+	Name                string
+	Likes               int64
+	Blogs               []OwnedBlog
 }

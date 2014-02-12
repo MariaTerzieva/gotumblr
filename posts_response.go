@@ -2,7 +2,7 @@ package gotumblr
 
 import "encoding/json"
 
-type postsResponse struct {
-	Blog blog
+type PostsResponse struct {
+	Blog  BlogInfo
 	Posts []json.RawMessage
 }

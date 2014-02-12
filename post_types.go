@@ -1,75 +1,75 @@
 package gotumblr
 
-type textPost struct {
-	basePost
+type TextPost struct {
+	BasePost
 	Title, Body string
 }
 
-type altSize struct {
+type AltSize struct {
 	Width, Height int64
-	Url string
+	Url           string
 }
 
-type photoObject struct {
-	Caption string
-	Alt_sizes []altSize
+type PhotoObject struct {
+	Caption   string
+	Alt_sizes []AltSize
 }
 
-type photoPost struct {
-	basePost
-	Photos []photoObject
-	Caption string
+type PhotoPost struct {
+	BasePost
+	Photos        []PhotoObject
+	Caption       string
 	Width, Height int64
 }
 
-type quotePost struct {
-	basePost
+type QuotePost struct {
+	BasePost
 	Text, Source string
 }
 
-type linkPost struct {
-	basePost
+type LinkPost struct {
+	BasePost
 	Title, Url, Description string
 }
 
-type dialogue struct {
+type DialogueInfo struct {
 	Name, Label, Phrase string
 }
 
-type chatPost struct {
-	basePost
+type ChatPost struct {
+	BasePost
 	Title, Body string
-	Dialogue []dialogue
+	Dialogue    []DialogueInfo
 }
 
-type audioPost struct {
-	basePost
-	Caption string
-	Player string
-	Plays int64
-	Album_art string
-	Artist string
-	Album string
-	Track_name string
+type AudioPost struct {
+	BasePost
+	Caption      string
+	Player       string
+	Plays        int64
+	Album_art    string
+	Artist       string
+	Album        string
+	Track_name   string
 	Track_number int64
-	Year int64
+	Year         int64
 }
 
-type player struct {
-	Width int64
+type PlayerInfo struct {
+	Width      int64
 	Embed_code string
 }
 
-type videoPost struct {
-	basePost
+type VideoPost struct {
+	BasePost
 	Caption string
-	Player []player
+	Player  []PlayerInfo
 }
 
-type answerPost struct {
-	basePost
+type AnswerPost struct {
+	BasePost
 	Asking_name string
-	Asking_url string
-	Question string
-	Answer string
+	Asking_url  string
+	Question    string
+	Answer      string
 }

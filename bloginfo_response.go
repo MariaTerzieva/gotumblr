@@ -1,5 +1,5 @@
 package gotumblr
 
-type blogInfoResponse struct {
-	Blog blog
+type BlogInfoResponse struct {
+	Blog BlogInfo
 }

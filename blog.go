@@ -1,13 +1,13 @@
 package gotumblr
 
-type blog struct {
-	Title string
-	Posts int64
-	Name string
-	Url string
-	Updated int64
+type BlogInfo struct {
+	Title       string
+	Posts       int64
+	Name        string
+	Url         string
+	Updated     int64
 	Description string
-	Ask bool
-	Ask_anon bool
-	Likes int64
+	Ask         bool
+	Ask_anon    bool
+	Likes       int64
 }

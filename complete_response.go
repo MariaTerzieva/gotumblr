@@ -2,7 +2,7 @@ package gotumblr
 
 import "encoding/json"
 
-type completeResponse struct {
-	Meta meta
+type CompleteResponse struct {
+	Meta     MetaInfo
 	Response json.RawMessage
 }

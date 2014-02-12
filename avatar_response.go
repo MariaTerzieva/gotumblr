@@ -1,5 +1,5 @@
 package gotumblr
 
-type avatarResponse struct {
+type AvatarResponse struct {
 	Avatar_url string
 }

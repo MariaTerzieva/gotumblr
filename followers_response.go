@@ -1,6 +1,6 @@
 package gotumblr
 
-type followersResponse struct {
+type FollowersResponse struct {
 	Total_users int64
-	Users []user
+	Users       []User
 }

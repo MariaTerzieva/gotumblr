@@ -1,8 +1,8 @@
 package gotumblr
 
-type user struct {
-	Name string
+type User struct {
+	Name      string
 	Following bool
-	Url string
-	Updated int64
+	Url       string
+	Updated   int64
 }

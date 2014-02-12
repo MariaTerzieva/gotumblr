@@ -1,6 +1,6 @@
 package gotumblr
 
-type meta struct {
+type MetaInfo struct {
 	Status int64
-	Msg string
+	Msg    string
 }
