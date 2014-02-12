@@ -3,6 +3,8 @@
 package gotumblr
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -24,13 +26,16 @@ func NewTumblrRestClient(consumerKey, consumerSecret, oauthToken, oauthSecret, c
 }
 
 //Gets the user information.
-func (trc *TumblrRestClient) Info() map[string]interface{} {
-	return trc.request.Get("/v2/user/info", map[string]string{})
+func (trc *TumblrRestClient) Info() UserInfoResponse {
+	data := trc.request.Get("/v2/user/info", map[string]string{})
+	var result UserInfoResponse
+	json.Unmarshal(data.Response, &result)
+	return result
 }
 
 //Retrieves the url of the blog's avatar.
 //size can be: 16, 24, 30, 40, 48, 64, 96, 128 or 512.
-func (trc *TumblrRestClient) Avatar(blogname string, size int) map[string]interface{} {
+func (trc *TumblrRestClient) Avatar(blogname string, size int) AvatarResponse {
 	requestUrl := fmt.Sprintf("http://api.tumblr.com/v2/blog/%s/avatar/%d", blogname, size)
 	httpRequest, err := http.NewRequest("GET", requestUrl, nil)
 	if err != nil {
@@ -46,23 +51,32 @@ func (trc *TumblrRestClient) Avatar(blogname string, size int) map[string]interf
 	if err3 != nil {
 		fmt.Println(err3)
 	}
-	return trc.request.JSONParse(body)
+	data := trc.request.JSONParse(body)
+	var result AvatarResponse
+	json.Unmarshal(data.Response, &result)
+	return result
 }
 
 //Gets the likes of the given user.
 //options can be:
 //limit: the number of results to return, inclusive;
 //offset: liked post number to start at.
-func (trc *TumblrRestClient) Likes(options map[string]string) map[string]interface{} {
-	return trc.request.Get("/v2/user/likes", options)
+func (trc *TumblrRestClient) Likes(options map[string]string) LikesResponse {
+	data := trc.request.Get("/v2/user/likes", options)
+	var result LikesResponse
+	json.Unmarshal(data.Response, &result)
+	return result
 }
 
 //Gets the blogs that the user is following.
 //options can be:
 //limit: the number of results to return;
 //offset: result number to start at.
-func (trc *TumblrRestClient) Following(options map[string]string) map[string]interface{} {
-	return trc.request.Get("/v2/user/following", options)
+func (trc *TumblrRestClient) Following(options map[string]string) FollowingResponse {
+	data := trc.request.Get("/v2/user/following", options)
+	var result FollowingResponse
+	json.Unmarshal(data.Response, &result)
+	return result
 }
 
 //Gets the dashboard of the user.
@@ -73,8 +87,11 @@ func (trc *TumblrRestClient) Following(options map[string]string) map[string]int
 //since_id: return posts that have apeared after this id;
 //reblog_info: whether to return reblog information about the posts;
 //notes_info: whether to return notes information about the posts.
-func (trc *TumblrRestClient) Dashboard(options map[string]string) map[string]interface{} {
-	return trc.request.Get("/v2/user/dashboard", options)
+func (trc *TumblrRestClient) Dashboard(options map[string]string) DraftsResponse {
+	data := trc.request.Get("/v2/user/dashboard", options)
+	var result DraftsResponse
+	json.Unmarshal(data.Response, &result)
+	return result
 }
 
 //Gets a list of posts with the given tag.
@@ -83,10 +100,13 @@ func (trc *TumblrRestClient) Dashboard(options map[string]string) map[string]int
 //before: the timestamp of when you'd like to see posts before;
 //limit: the number of results to return;
 //filter: the post format you want to get(e.g html, text, raw).
-func (trc *TumblrRestClient) Tagged(tag string, options map[string]string) map[string]interface{} {
+func (trc *TumblrRestClient) Tagged(tag string, options map[string]string) []json.RawMessage {
 	options["tag"] = tag
 	options["api_key"] = trc.request.apiKey
-	return trc.request.Get("/v2/tagged", options)
+	data := trc.request.Get("/v2/tagged", options)
+	result := []json.RawMessage{}
+	json.Unmarshal(data.Response, &result)
+	return result
 }
 
 //Gets a list of posts from a blog.
@@ -99,7 +119,7 @@ func (trc *TumblrRestClient) Tagged(tag string, options map[string]string) map[s
 //limit: the number of posts to return;
 //offset: the number of the post you want to start from;
 //filter: return only posts with a specific format(e.g. html, text, raw).
-func (trc *TumblrRestClient) Posts(blogname, postsType string, options map[string]string) map[string]interface{} {
+func (trc *TumblrRestClient) Posts(blogname, postsType string, options map[string]string) PostsResponse {
 	var requestUrl string
 	if postsType == "" {
 		requestUrl = fmt.Sprintf("/v2/blog/%s/posts", blogname)
@@ -107,15 +127,21 @@ func (trc *TumblrRestClient) Posts(blogname, postsType string, options map[strin
 		requestUrl = fmt.Sprintf("/v2/blog/%s/posts/%s", blogname, postsType)
 	}
 	options["api_key"] = trc.request.apiKey
-	return trc.request.Get(requestUrl, options)
+	data := trc.request.Get(requestUrl, options)
+	var result PostsResponse
+	json.Unmarshal(data.Response, &result)
+	return result
 }
 
 //Gets general information about the blog.
 //blogname: name of the blog you want to get information about(e.g. mgterzieva.tumblr.com).
-func (trc *TumblrRestClient) BlogInfo(blogname string) map[string]interface{} {
+func (trc *TumblrRestClient) BlogInfo(blogname string) BlogInfoResponse {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/info", blogname)
 	options := map[string]string{"api_key": trc.request.apiKey}
-	return trc.request.Get(requestUrl, options)
+	data := trc.request.Get(requestUrl, options)
+	var result BlogInfoResponse
+	json.Unmarshal(data.Response, &result)
+	return result
 }
 
 //Gets the followers of the blog given.
@@ -123,9 +149,12 @@ func (trc *TumblrRestClient) BlogInfo(blogname string) map[string]interface{} {
 //optons can be:
 //limit: the number of results to return, inclusive;
 //offset: result to start at.
-func (trc *TumblrRestClient) Followers(blogname string, options map[string]string) map[string]interface{} {
+func (trc *TumblrRestClient) Followers(blogname string, options map[string]string) FollowersResponse {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/followers", blogname)
-	return trc.request.Get(requestUrl, options)
+	data := trc.request.Get(requestUrl, options)
+	var result FollowersResponse
+	json.Unmarshal(data.Response, &result)
+	return result
 }
 
 //Gets the likes of blog given.
@@ -133,10 +162,13 @@ func (trc *TumblrRestClient) Followers(blogname string, options map[string]strin
 //options can be:
 //limit: how many likes do you want to get;
 //offset: the number of the like you want to start from.
-func (trc *TumblrRestClient) BlogLikes(blogname string, options map[string]string) map[string]interface{} {
+func (trc *TumblrRestClient) BlogLikes(blogname string, options map[string]string) LikesResponse {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/likes", blogname)
-	options["api_key"] = trc.request.apiKey 
-	return trc.request.Get(requestUrl, options)
+	options["api_key"] = trc.request.apiKey
+	data := trc.request.Get(requestUrl, options)
+	var result LikesResponse
+	json.Unmarshal(data.Response, &result)
+	return result
 }
 
 //Gets posts that are currently in the blog's queue.
@@ -144,60 +176,85 @@ func (trc *TumblrRestClient) BlogLikes(blogname string, options map[string]strin
 //limit: the number of results to return;
 //offset: post number to start at;
 //filter: specify posts' format(e.g. format="html", format="text", format="raw").
-func (trc *TumblrRestClient) Queue(blogname string, options map[string]string) map[string]interface{} {
+func (trc *TumblrRestClient) Queue(blogname string, options map[string]string) DraftsResponse {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/posts/queue", blogname)
-	return trc.request.Get(requestUrl, options)
+	data := trc.request.Get(requestUrl, options)
+	var result DraftsResponse
+	json.Unmarshal(data.Response, &result)
+	return result
 }
 
 //Gets posts that are currently in the blog's drafts.
 //options can be:
 //filter: specify posts' format(e.g. format="html", format="text", format="raw").
-func (trc *TumblrRestClient) Drafts(blogname string, options map[string]string) map[string]interface{} {
+func (trc *TumblrRestClient) Drafts(blogname string, options map[string]string) DraftsResponse {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/posts/draft", blogname)
-	return trc.request.Get(requestUrl, options)
+	data := trc.request.Get(requestUrl, options)
+	var result DraftsResponse
+	json.Unmarshal(data.Response, &result)
+	return result
 }
 
 //Retrieve submission posts.
 //options can be:
 //offset: post number to start at;
 //filter: specify posts' format(e.g. format="html", format="text", format="raw").
-func (trc *TumblrRestClient) Submission(blogname string, options map[string]string) map[string]interface{} {
+func (trc *TumblrRestClient) Submission(blogname string, options map[string]string) DraftsResponse {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/posts/submission", blogname)
-	return trc.request.Get(requestUrl, options)
+	data := trc.request.Get(requestUrl, options)
+	var result DraftsResponse
+	json.Unmarshal(data.Response, &result)
+	return result
 }
 
 //Follow the url of a given blog.
 //blogname: the url of the blog to follow.
-func (trc *TumblrRestClient) Follow(blogname string) map[string]interface{} {
+func (trc *TumblrRestClient) Follow(blogname string) error {
 	requestUrl := fmt.Sprintf("/v2/user/follow")
 	params := map[string]string{"url": blogname}
-	return trc.request.Post(requestUrl, params, []string{})
+	data := trc.request.Post(requestUrl, params, []string{})
+	if data.Meta.Status != 200 {
+		return errors.New(data.Meta.Msg)
+	}
+	return nil
 }
 
 //Unfollow the url of a given blog.
 //blogname: the url of the blog to unfollow.
-func (trc *TumblrRestClient) Unfollow(blogname string) map[string]interface{} {
+func (trc *TumblrRestClient) Unfollow(blogname string) error {
 	requestUrl := fmt.Sprintf("/v2/user/unfollow")
 	params := map[string]string{"url": blogname}
-	return trc.request.Post(requestUrl, params, []string{})
+	data := trc.request.Post(requestUrl, params, []string{})
+	if data.Meta.Status != 200 {
+		return errors.New(data.Meta.Msg)
+	}
+	return nil
 }
 
 //Like post of a given blog.
 //id: the id of the post you want to like.
 //reblog_key: the reblog key for the post id.
-func (trc *TumblrRestClient) Like(id, reblogKey string) map[string]interface{} {
+func (trc *TumblrRestClient) Like(id, reblogKey string) error {
 	requestUrl := fmt.Sprintf("/v2/user/like")
 	params := map[string]string{"id": id, "reblog_key": reblogKey}
-	return trc.request.Post(requestUrl, params, []string{})
+	data := trc.request.Post(requestUrl, params, []string{})
+	if data.Meta.Status != 200 {
+		return errors.New(data.Meta.Msg)
+	}
+	return nil
 }
 
 //Unlike a post of a given blog.
 //id: the id of the post you want to unlike.
 //reblog_key: the reblog key for the post id.
-func (trc *TumblrRestClient) Unlike(id, reblogKey string) map[string]interface{} {
+func (trc *TumblrRestClient) Unlike(id, reblogKey string) error {
 	requestUrl := fmt.Sprintf("/v2/user/unlike")
 	params := map[string]string{"id": id, "reblog_key": reblogKey}
-	return trc.request.Post(requestUrl, params, []string{})
+	data := trc.request.Post(requestUrl, params, []string{})
+	if data.Meta.Status != 200 {
+		return errors.New(data.Meta.Msg)
+	}
+	return nil
 }
 
 //Create a photo post or photoset on a blog.
@@ -215,10 +272,14 @@ func (trc *TumblrRestClient) Unlike(id, reblogKey string) map[string]interface{}
 //link: the 'click-through' url for the photo;
 //*source: the photo source url(either source or data);
 //*data: one or more image files(either source or data).
-func (trc *TumblrRestClient) CreatePhoto(blogname string, options map[string]string) map[string]interface{} {
+func (trc *TumblrRestClient) CreatePhoto(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
 	options["type"] = "photo"
-	return trc.request.Post(requestUrl, options, []string{})
+	data := trc.request.Post(requestUrl, options, []string{})
+	if data.Meta.Status != 201 {
+		return errors.New(data.Meta.Msg)
+	}
+	return nil
 }
 
 //Create a text post on a blog.
@@ -234,10 +295,14 @@ func (trc *TumblrRestClient) CreatePhoto(blogname string, options map[string]str
 //slug: add a short text summary to the end of the post url;
 //title: the optional title of the post;
 //*body: the full text body.
-func (trc *TumblrRestClient) CreateText(blogname string, options map[string]string) map[string]interface{} {
+func (trc *TumblrRestClient) CreateText(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
 	options["type"] = "text"
-	return trc.request.Post(requestUrl, options, []string{})
+	data := trc.request.Post(requestUrl, options, []string{})
+	if data.Meta.Status != 201 {
+		return errors.New(data.Meta.Msg)
+	}
+	return nil
 }
 
 //Create a quote post on a blog.
@@ -253,10 +318,14 @@ func (trc *TumblrRestClient) CreateText(blogname string, options map[string]stri
 //slug: add a short text summary to the end of the post url;
 //*quote: the full text of the quote;
 //source: the cited source of the quote.
-func (trc *TumblrRestClient) CreateQuote(blogname string, options map[string]string) map[string]interface{} {
+func (trc *TumblrRestClient) CreateQuote(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
 	options["type"] = "quote"
-	return trc.request.Post(requestUrl, options, []string{})
+	data := trc.request.Post(requestUrl, options, []string{})
+	if data.Meta.Status != 201 {
+		return errors.New(data.Meta.Msg)
+	}
+	return nil
 }
 
 //Create a link post on a blog.
@@ -273,10 +342,14 @@ func (trc *TumblrRestClient) CreateQuote(blogname string, options map[string]str
 //title: the title of the page the link points to;
 //*url: the link you are posting;
 //description: the description of the link you are posting.
-func (trc *TumblrRestClient) CreateLink(blogname string, options map[string]string) map[string]interface{} {
+func (trc *TumblrRestClient) CreateLink(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
 	options["type"] = "link"
-	return trc.request.Post(requestUrl, options, []string{})
+	data := trc.request.Post(requestUrl, options, []string{})
+	if data.Meta.Status != 201 {
+		return errors.New(data.Meta.Msg)
+	}
+	return nil
 }
 
 //Create a chat post on a blog.
@@ -292,10 +365,14 @@ func (trc *TumblrRestClient) CreateLink(blogname string, options map[string]stri
 //slug: add a short text summary to the end of the post url;
 //title: the title of the chat;
 //*conversation: the text of the conversation/chat, with dialogue labels.
-func (trc *TumblrRestClient) CreateChatPost(blogname string, options map[string]string) map[string]interface{} {
+func (trc *TumblrRestClient) CreateChatPost(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
 	options["type"] = "chat"
-	return trc.request.Post(requestUrl, options, []string{})
+	data := trc.request.Post(requestUrl, options, []string{})
+	if data.Meta.Status != 201 {
+		return errors.New(data.Meta.Msg)
+	}
+	return nil
 }
 
 //Create an audio post on a blog.
@@ -312,10 +389,14 @@ func (trc *TumblrRestClient) CreateChatPost(blogname string, options map[string]
 //caption: the caption of the post;
 //*external_url: the url of the site that hosts the audio file(either external_url or data);
 //*data: the local filename path to the audio you are uploading(either external_url or data).
-func (trc *TumblrRestClient) CreateAudio(blogname string, options map[string]string) map[string]interface{} {
+func (trc *TumblrRestClient) CreateAudio(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
 	options["type"] = "audio"
-	return trc.request.Post(requestUrl, options, []string{})
+	data := trc.request.Post(requestUrl, options, []string{})
+	if data.Meta.Status != 201 {
+		return errors.New(data.Meta.Msg)
+	}
+	return nil
 }
 
 //Create a video post on a blog.
@@ -332,10 +413,14 @@ func (trc *TumblrRestClient) CreateAudio(blogname string, options map[string]str
 //caption: the caption for the post;
 //*embed: the html embed code for the video(either embed or data);
 //*data: the local filename path to the video you are uploading(either embed or data).
-func (trc *TumblrRestClient) CreateVideo(blogname string, options map[string]string) map[string]interface{} {
+func (trc *TumblrRestClient) CreateVideo(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
 	options["type"] = "video"
-	return trc.request.Post(requestUrl, options, []string{})
+	data := trc.request.Post(requestUrl, options, []string{})
+	if data.Meta.Status != 201 {
+		return errors.New(data.Meta.Msg)
+	}
+	return nil
 }
 
 //Creates a reblog on the given blog.
@@ -344,18 +429,26 @@ func (trc *TumblrRestClient) CreateVideo(blogname string, options map[string]str
 //(with * are marked required options)
 //*id: the id of the reblogged post;
 //*reblog_key: the reblog key of the rebloged post.
-func (trc *TumblrRestClient) Reblog(blogname string, options map[string]string) map[string]interface{} {
+func (trc *TumblrRestClient) Reblog(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post/reblog", blogname)
-	return trc.request.Post(requestUrl, options, []string{})
+	data := trc.request.Post(requestUrl, options, []string{})
+	if data.Meta.Status != 201 {
+		return errors.New(data.Meta.Msg)
+	}
+	return nil
 }
 
 //Deletes a post with a given id.
 //blogname: the url of the blog you want to delete from.
 //id: the id of the post you want to delete.
-func (trc *TumblrRestClient) DeletePost(blogname, id string) map[string]interface{} {
+func (trc *TumblrRestClient) DeletePost(blogname, id string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post/delete", blogname)
 	params := map[string]string{"id": id}
-	return trc.request.Post(requestUrl, params, []string{}) 
+	data := trc.request.Post(requestUrl, params, []string{})
+	if data.Meta.Status != 200 {
+		return errors.New(data.Meta.Msg)
+	}
+	return nil
 }
 
 //Edits a post with a given id.
@@ -370,7 +463,11 @@ func (trc *TumblrRestClient) DeletePost(blogname, id string) map[string]interfac
 //slug: add a short text summary to the end of the post url;
 //*id: the id of the post.
 //The other options are specific to the type of post you want to edit.
-func (trc *TumblrRestClient) EditPost(blogname string, options map[string]string) map[string]interface{} {
+func (trc *TumblrRestClient) EditPost(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post/edit", blogname)
-	return trc.request.Post(requestUrl, options, []string{})
+	data := trc.request.Post(requestUrl, options, []string{})
+	if data.Meta.Status != 200 {
+		return errors.New(data.Meta.Msg)
+	}
+	return nil
 }

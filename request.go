@@ -47,7 +47,7 @@ func NewTumblrRequest(consumerKey, consumerSecret, oauthToken, oauthSecret, call
 //Make a GET request to the API with properly formatted parameters.
 //requestUrl: the url you are making the request to.
 //params: the parameters needed for the request.
-func (tr *TumblrRequest) Get(requestUrl string, params map[string]string) map[string]interface{} {
+func (tr *TumblrRequest) Get(requestUrl string, params map[string]string) CompleteResponse {
 	fullUrl := tr.host + requestUrl
 	if len(params) != 0 {
 		values := url.Values{}
@@ -79,10 +79,10 @@ func (tr *TumblrRequest) Get(requestUrl string, params map[string]string) map[st
 //requestUrl: the url you are making the request to.
 //params: all the parameters needed for the request.
 //files: list of files.
-func (tr *TumblrRequest) Post(requestUrl string, params map[string]string, files []string) map[string]interface{} {
+func (tr *TumblrRequest) Post(requestUrl string, params map[string]string, files []string) CompleteResponse {
 	full_url := tr.host + requestUrl
 	if len(files) != 0 {
-		return tr.PostMultipart(requestUrl, params, files)
+		//return tr.PostMultipart(requestUrl, params, files)
 	} else {
 		values := url.Values{}
 		for key, value := range params {
@@ -111,8 +111,8 @@ func (tr *TumblrRequest) Post(requestUrl string, params map[string]string, files
 
 //Parse JSON response.
 //content: the content returned from the web request to be parsed as JSON.
-func (tr *TumblrRequest) JSONParse(content []byte) map[string]interface{} {
-	data := map[string]interface{}{}
+func (tr *TumblrRequest) JSONParse(content []byte) CompleteResponse {
+	var data CompleteResponse
 	err := json.Unmarshal(content, &data)
 	if err != nil {
 		fmt.Println(err)
