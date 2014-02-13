@@ -63,7 +63,7 @@ func handleFunc(url, method, response string, parameters map[string]string, t *t
 func TestNewTumblrRestClient(t *testing.T) {
 	c := NewTumblrRestClient("", "", "", "", "", "http://api.tumblr.com")
 	if c.request.host != "http://api.tumblr.com" {
-		t.Errorf("New Client host = %v, want http://api.tumblr.com")
+		t.Errorf("New Client host = %v, want http://api.tumblr.com", c.request.host)
 	}
 }
 
