@@ -40,6 +40,16 @@ func teardown() {
 	server.Close()
 }
 
+//checks the request parameters
+func checkParameters(request *http.Request, parameters map[string]string, t *testing.T) {
+	request.ParseForm()
+	for key, value := range parameters {
+		if request.Form.Get(key) != value {
+			t.Errorf("%v should be %v", key, value)
+		}
+	} 
+}
+
 func TestNewTumblrRestClient(t *testing.T) {
 	c := NewTumblrRestClient("", "", "", "", "", "http://api.tumblr.com")
 	if c.request.host != "http://api.tumblr.com" {
@@ -294,6 +304,7 @@ func TestFollow(t *testing.T) {
 	defer teardown()
 
 	mux.HandleFunc("/v2/user/follow", func(w http.ResponseWriter, r *http.Request) {
+			checkParameters(r, map[string]string{"url": "thehungergames"}, t)
 			if m := "POST"; m != r.Method {
 				t.Errorf("Request method = %v, want %v", r.Method, m)
 			}
@@ -312,6 +323,7 @@ func TestUnfollow(t *testing.T) {
 	defer teardown()
 
 	mux.HandleFunc("/v2/user/unfollow", func(w http.ResponseWriter, r *http.Request) {
+			checkParameters(r, map[string]string{"url": "thehungergames"}, t)
 			if m := "POST"; m != r.Method {
 				t.Errorf("Request method = %v, want %v", r.Method, m)
 			}
@@ -330,6 +342,7 @@ func TestLike(t *testing.T) {
 	defer teardown()
 
 	mux.HandleFunc("/v2/user/like", func(w http.ResponseWriter, r *http.Request) {
+			checkParameters(r, map[string]string{"id": "75195127536", "reblog_key": "kLXwhQ19"}, t)
 			if m := "POST"; m != r.Method {
 				t.Errorf("Request method = %v, want %v", r.Method, m)
 			}
@@ -347,6 +360,7 @@ func TestUnlike(t *testing.T) {
 	defer teardown()
 
 	mux.HandleFunc("/v2/user/unlike", func(w http.ResponseWriter, r *http.Request) {
+			checkParameters(r, map[string]string{"id": "75195127536", "reblog_key": "kLXwhQ19"}, t)
 			if m := "POST"; m != r.Method {
 				t.Errorf("Request method = %v, want %v", r.Method, m)
 			}
@@ -364,6 +378,7 @@ func TestCreatePhoto(t *testing.T) {
 	defer teardown()
 
 	mux.HandleFunc("/v2/blog/mgterzieva/post", func(w http.ResponseWriter, r *http.Request) {
+			checkParameters(r, map[string]string{"state": "draft"}, t)
 			if m := "POST"; m != r.Method {
 				t.Errorf("Request method = %v, want %v", r.Method, m)
 			}
@@ -382,6 +397,7 @@ func TestCreateText(t *testing.T) {
 	defer teardown()
 
 	mux.HandleFunc("/v2/blog/mgterzieva/post", func(w http.ResponseWriter, r *http.Request) {
+			checkParameters(r, map[string]string{"body": "Hello, hello!"}, t)
 			if m := "POST"; m != r.Method {
 				t.Errorf("Request method = %v, want %v", r.Method, m)
 			}
@@ -398,14 +414,17 @@ func TestCreateQuote(t *testing.T) {
 	setup()
 	defer teardown()
 
+	quote := "You can complain because roses have thorns, or you can rejoice because thorns have roses."
+	source := "Ziggy"
+
 	mux.HandleFunc("/v2/blog/mgterzieva/post", func(w http.ResponseWriter, r *http.Request) {
+			checkParameters(r, map[string]string{"source": source, "quote": quote}, t)
 			if m := "POST"; m != r.Method {
 				t.Errorf("Request method = %v, want %v", r.Method, m)
 			}
 			fmt.Fprint(w, `{"meta": {"status": 201, "msg": "Created"}}`)
 		})
-	quote := "You can complain because roses have thorns, or you can rejoice because thorns have roses."
-	source := "Ziggy"
+
 	post_quote := client.CreateQuote("mgterzieva", map[string]string{"source": source, "quote": quote})
 	if post_quote != nil {
 		t.Errorf("CreateQuote returned %+v, want %+v", post_quote, nil)
@@ -417,6 +436,7 @@ func TestCreateChatPost(t *testing.T) {
 	defer teardown()
 
 	mux.HandleFunc("/v2/blog/mgterzieva/post", func(w http.ResponseWriter, r *http.Request) {
+			checkParameters(r, map[string]string{}, t)
 			if m := "POST"; m != r.Method {
 				t.Errorf("Request method = %v, want %v", r.Method, m)
 			}
@@ -435,6 +455,7 @@ func TestCreateAudio(t *testing.T) {
 	defer teardown()
 
 	mux.HandleFunc("/v2/blog/mgterzieva/post", func(w http.ResponseWriter, r *http.Request) {
+			checkParameters(r, map[string]string{"external_url": "http://coolsongs.com/song"}, t)
 			if m := "POST"; m != r.Method {
 				t.Errorf("Request method = %v, want %v", r.Method, m)
 			}
@@ -450,14 +471,16 @@ func TestCreateAudio(t *testing.T) {
 func TestCreateVideo(t *testing.T) {
 	setup()
 	defer teardown()
+	code := `<iframe width="560" height="315" src="//www.videos.com/embed/uMNGkgsgaB" frameborder="0" allowfullscreen></iframe>`
+
 
 	mux.HandleFunc("/v2/blog/mgterzieva/post", func(w http.ResponseWriter, r *http.Request) {
+			checkParameters(r, map[string]string{"embed": code}, t)
 			if m := "POST"; m != r.Method {
 				t.Errorf("Request method = %v, want %v", r.Method, m)
 			}
 			fmt.Fprint(w, `{"meta": {"status": 201, "msg": "Created"}}`)
 		})
-	code := `<iframe width="560" height="315" src="//www.videos.com/embed/uMNGkgsgaB" frameborder="0" allowfullscreen></iframe>`
 	post_video := client.CreateVideo("mgterzieva", map[string]string{"embed": code})
 	if post_video != nil {
 		t.Errorf("CreateVideo returned %+v, want %+v", post_video, nil)
@@ -469,6 +492,7 @@ func TestReblog(t *testing.T) {
 	defer teardown()
 
 	mux.HandleFunc("/v2/blog/mgterzieva/post/reblog", func(w http.ResponseWriter, r *http.Request) {
+			checkParameters(r, map[string]string{"id": "7161981", "reblog_key": "blah"}, t)
 			if m := "POST"; m != r.Method {
 				t.Errorf("Request method = %v, want %v", r.Method, m)
 			}
@@ -487,6 +511,7 @@ func TestDeletePost(t *testing.T) {
 	defer teardown()
 
 	mux.HandleFunc("/v2/blog/mgterzieva/post/delete", func(w http.ResponseWriter, r *http.Request) {
+			checkParameters(r, map[string]string{"id": ""}, t)
 			if m := "POST"; m != r.Method {
 				t.Errorf("Request method = %v, want %v", r.Method, m)
 			}
@@ -505,6 +530,7 @@ func TestEditPost(t *testing.T) {
 	defer teardown()
 
 	mux.HandleFunc("/v2/blog/mgterzieva/post/edit", func(w http.ResponseWriter, r *http.Request) {
+			checkParameters(r, map[string]string{}, t)
 			if m := "POST"; m != r.Method {
 				t.Errorf("Request method = %v, want %v", r.Method, m)
 			}
