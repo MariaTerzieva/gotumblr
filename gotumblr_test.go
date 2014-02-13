@@ -215,3 +215,75 @@ func TestFollowers(t *testing.T) {
 		t.Errorf("Followers returned %+v, want %+v", followers, want)
 	}
 }
+
+func TestBlogLikes(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/blog/mgterzieva/likes", func(w http.ResponseWriter, r *http.Request) {
+			if m := "GET"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"response": {"liked_posts": [], "liked_count": 0}}`)
+		})
+
+	likes := client.BlogLikes("mgterzieva", map[string]string{})
+	want := LikesResponse{Liked_posts: []json.RawMessage{}, Liked_count: 0}
+	if !reflect.DeepEqual(likes, want) {
+		t.Errorf("BlogLikes returned %+v, want %+v", likes, want)
+	}
+}
+
+func TestQueue(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/blog/mgterzieva/posts/queue", func(w http.ResponseWriter, r *http.Request) {
+			if m := "GET"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"response": {"posts": []}}`)
+		})
+
+	queue := client.Queue("mgterzieva", map[string]string{})
+	want := DraftsResponse{Posts: []json.RawMessage{}}
+	if !reflect.DeepEqual(queue, want) {
+		t.Errorf("Queue returned %+v, want %+v", queue, want)
+	}
+}
+
+func TestDrafts(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/blog/mgterzieva/posts/draft", func(w http.ResponseWriter, r *http.Request) {
+			if m := "GET"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"response": {"posts": []}}`)
+		})
+
+	drafts := client.Drafts("mgterzieva", map[string]string{})
+	want := DraftsResponse{Posts: []json.RawMessage{}}
+	if !reflect.DeepEqual(drafts, want) {
+		t.Errorf("Drafts returned %+v, want %+v", drafts, want)
+	}
+}
+
+func TestSubmission(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/blog/mgterzieva/posts/submission", func(w http.ResponseWriter, r *http.Request) {
+			if m := "GET"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"response": {"posts": []}}`)
+		})
+
+	submission := client.Submission("mgterzieva", map[string]string{})
+	want := DraftsResponse{Posts: []json.RawMessage{}}
+	if !reflect.DeepEqual(submission, want) {
+		t.Errorf("Submission returned %+v, want %+v", submission, want)
+	}
+}
