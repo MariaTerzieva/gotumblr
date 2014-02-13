@@ -13,6 +13,11 @@ Install gotumblr
 
 In terminal write `go get github.com/MariaTerzieva/gotumblr`
 
+Running the tests
+-----------------
+
+Run the tests with `go test` to check if everything is ok.
+
 Using the package
 -----------------
 

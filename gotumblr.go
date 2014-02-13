@@ -212,7 +212,7 @@ func (trc *TumblrRestClient) Submission(blogname string, options map[string]stri
 func (trc *TumblrRestClient) Follow(blogname string) error {
 	requestUrl := fmt.Sprintf("/v2/user/follow")
 	params := map[string]string{"url": blogname}
-	data := trc.request.Post(requestUrl, params, []string{})
+	data := trc.request.Post(requestUrl, params)
 	if data.Meta.Status != 200 {
 		return errors.New(data.Meta.Msg)
 	}
@@ -224,7 +224,7 @@ func (trc *TumblrRestClient) Follow(blogname string) error {
 func (trc *TumblrRestClient) Unfollow(blogname string) error {
 	requestUrl := fmt.Sprintf("/v2/user/unfollow")
 	params := map[string]string{"url": blogname}
-	data := trc.request.Post(requestUrl, params, []string{})
+	data := trc.request.Post(requestUrl, params)
 	if data.Meta.Status != 200 {
 		return errors.New(data.Meta.Msg)
 	}
@@ -237,7 +237,7 @@ func (trc *TumblrRestClient) Unfollow(blogname string) error {
 func (trc *TumblrRestClient) Like(id, reblogKey string) error {
 	requestUrl := fmt.Sprintf("/v2/user/like")
 	params := map[string]string{"id": id, "reblog_key": reblogKey}
-	data := trc.request.Post(requestUrl, params, []string{})
+	data := trc.request.Post(requestUrl, params)
 	if data.Meta.Status != 200 {
 		return errors.New(data.Meta.Msg)
 	}
@@ -250,7 +250,7 @@ func (trc *TumblrRestClient) Like(id, reblogKey string) error {
 func (trc *TumblrRestClient) Unlike(id, reblogKey string) error {
 	requestUrl := fmt.Sprintf("/v2/user/unlike")
 	params := map[string]string{"id": id, "reblog_key": reblogKey}
-	data := trc.request.Post(requestUrl, params, []string{})
+	data := trc.request.Post(requestUrl, params)
 	if data.Meta.Status != 200 {
 		return errors.New(data.Meta.Msg)
 	}
@@ -270,12 +270,11 @@ func (trc *TumblrRestClient) Unlike(id, reblogKey string) error {
 //slug: add a short text summary to the end of the post url;
 //caption: the caption that you want applied to the photo;
 //link: the 'click-through' url for the photo;
-//*source: the photo source url(either source or data);
-//*data: one or more image files(either source or data).
+//*source: the photo source url.
 func (trc *TumblrRestClient) CreatePhoto(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
 	options["type"] = "photo"
-	data := trc.request.Post(requestUrl, options, []string{})
+	data := trc.request.Post(requestUrl, options)
 	if data.Meta.Status != 201 {
 		return errors.New(data.Meta.Msg)
 	}
@@ -298,7 +297,7 @@ func (trc *TumblrRestClient) CreatePhoto(blogname string, options map[string]str
 func (trc *TumblrRestClient) CreateText(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
 	options["type"] = "text"
-	data := trc.request.Post(requestUrl, options, []string{})
+	data := trc.request.Post(requestUrl, options)
 	if data.Meta.Status != 201 {
 		return errors.New(data.Meta.Msg)
 	}
@@ -321,7 +320,7 @@ func (trc *TumblrRestClient) CreateText(blogname string, options map[string]stri
 func (trc *TumblrRestClient) CreateQuote(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
 	options["type"] = "quote"
-	data := trc.request.Post(requestUrl, options, []string{})
+	data := trc.request.Post(requestUrl, options)
 	if data.Meta.Status != 201 {
 		return errors.New(data.Meta.Msg)
 	}
@@ -345,7 +344,7 @@ func (trc *TumblrRestClient) CreateQuote(blogname string, options map[string]str
 func (trc *TumblrRestClient) CreateLink(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
 	options["type"] = "link"
-	data := trc.request.Post(requestUrl, options, []string{})
+	data := trc.request.Post(requestUrl, options)
 	if data.Meta.Status != 201 {
 		return errors.New(data.Meta.Msg)
 	}
@@ -368,7 +367,7 @@ func (trc *TumblrRestClient) CreateLink(blogname string, options map[string]stri
 func (trc *TumblrRestClient) CreateChatPost(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
 	options["type"] = "chat"
-	data := trc.request.Post(requestUrl, options, []string{})
+	data := trc.request.Post(requestUrl, options)
 	if data.Meta.Status != 201 {
 		return errors.New(data.Meta.Msg)
 	}
@@ -387,12 +386,11 @@ func (trc *TumblrRestClient) CreateChatPost(blogname string, options map[string]
 //format: sets the format type of the post(html or markdown);
 //slug: add a short text summary to the end of the post url;
 //caption: the caption of the post;
-//*external_url: the url of the site that hosts the audio file(either external_url or data);
-//*data: the local filename path to the audio you are uploading(either external_url or data).
+//*external_url: the url of the site that hosts the audio file.
 func (trc *TumblrRestClient) CreateAudio(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
 	options["type"] = "audio"
-	data := trc.request.Post(requestUrl, options, []string{})
+	data := trc.request.Post(requestUrl, options)
 	if data.Meta.Status != 201 {
 		return errors.New(data.Meta.Msg)
 	}
@@ -411,12 +409,11 @@ func (trc *TumblrRestClient) CreateAudio(blogname string, options map[string]str
 //format: sets the format type of the post(html or markdown);
 //slug: add a short text summary to the end of the post url;
 //caption: the caption for the post;
-//*embed: the html embed code for the video(either embed or data);
-//*data: the local filename path to the video you are uploading(either embed or data).
+//*embed: the html embed code for the video.
 func (trc *TumblrRestClient) CreateVideo(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
 	options["type"] = "video"
-	data := trc.request.Post(requestUrl, options, []string{})
+	data := trc.request.Post(requestUrl, options)
 	if data.Meta.Status != 201 {
 		return errors.New(data.Meta.Msg)
 	}
@@ -431,7 +428,7 @@ func (trc *TumblrRestClient) CreateVideo(blogname string, options map[string]str
 //*reblog_key: the reblog key of the rebloged post.
 func (trc *TumblrRestClient) Reblog(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post/reblog", blogname)
-	data := trc.request.Post(requestUrl, options, []string{})
+	data := trc.request.Post(requestUrl, options)
 	if data.Meta.Status != 201 {
 		return errors.New(data.Meta.Msg)
 	}
@@ -444,7 +441,7 @@ func (trc *TumblrRestClient) Reblog(blogname string, options map[string]string) 
 func (trc *TumblrRestClient) DeletePost(blogname, id string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post/delete", blogname)
 	params := map[string]string{"id": id}
-	data := trc.request.Post(requestUrl, params, []string{})
+	data := trc.request.Post(requestUrl, params)
 	if data.Meta.Status != 200 {
 		return errors.New(data.Meta.Msg)
 	}
@@ -465,7 +462,7 @@ func (trc *TumblrRestClient) DeletePost(blogname, id string) error {
 //The other options are specific to the type of post you want to edit.
 func (trc *TumblrRestClient) EditPost(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post/edit", blogname)
-	data := trc.request.Post(requestUrl, options, []string{})
+	data := trc.request.Post(requestUrl, options)
 	if data.Meta.Status != 200 {
 		return errors.New(data.Meta.Msg)
 	}

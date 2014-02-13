@@ -78,35 +78,30 @@ func (tr *TumblrRequest) Get(requestUrl string, params map[string]string) Comple
 //Makes a POST request to the API, allows for multipart data uploads.
 //requestUrl: the url you are making the request to.
 //params: all the parameters needed for the request.
-//files: list of files.
-func (tr *TumblrRequest) Post(requestUrl string, params map[string]string, files []string) CompleteResponse {
+func (tr *TumblrRequest) Post(requestUrl string, params map[string]string) CompleteResponse {
 	full_url := tr.host + requestUrl
-	if len(files) != 0 {
-		return tr.PostMultipart(requestUrl, params, files)
-	} else {
-		values := url.Values{}
-		for key, value := range params {
-			values.Set(key, value)
-		}
-		httpRequest, err := http.NewRequest("POST", full_url, strings.NewReader(values.Encode()))
-		if err != nil {
-			fmt.Println(err)
-		}
-		httpRequest.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		tr.service.Sign(httpRequest, tr.userConfig)
-		var httpResponse *http.Response
-		httpClient := new(http.Client)
-		httpResponse, err2 := httpClient.Do(httpRequest)
-		if err2 != nil {
-			fmt.Println(err2)
-		}
-		defer httpResponse.Body.Close()
-		body, err3 := ioutil.ReadAll(httpResponse.Body)
-		if err3 != nil {
-			fmt.Println(err3)
-		}
-		return tr.JSONParse(body)
+	values := url.Values{}
+	for key, value := range params {
+		values.Set(key, value)
 	}
+	httpRequest, err := http.NewRequest("POST", full_url, strings.NewReader(values.Encode()))
+	if err != nil {
+		fmt.Println(err)
+	}
+	httpRequest.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	tr.service.Sign(httpRequest, tr.userConfig)
+	var httpResponse *http.Response
+	httpClient := new(http.Client)
+	httpResponse, err2 := httpClient.Do(httpRequest)
+	if err2 != nil {
+		fmt.Println(err2)
+	}
+	defer httpResponse.Body.Close()
+	body, err3 := ioutil.ReadAll(httpResponse.Body)
+	if err3 != nil {
+		fmt.Println(err3)
+	}
+	return tr.JSONParse(body)
 }
 
 //Parse JSON response.
@@ -118,19 +113,4 @@ func (tr *TumblrRequest) JSONParse(content []byte) CompleteResponse {
 		fmt.Println(err)
 	}
 	return data
-}
-
-//Generates and makes a multipart request for data files.
-//requestUrl: the url you are making the request to.
-//params: all parameters needed for the request.
-//files: a list of files.
-func (tr *TumblrRequest) PostMultipart(requestUrl string, params map[string]string, files []string) CompleteResponse {
-	return CompleteResponse{}
-}
-
-//Properly encodes the multipart body of the request.
-//fields: the parameters used in the request.
-//files: a list of lists containing information about the files.
-func (tr *TumblrRequest) EncodeMultipartFormdata(fields map[string]string, files []string) (string, string) {
-	return "", ""
 }
