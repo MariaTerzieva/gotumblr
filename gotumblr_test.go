@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"testing"
 	"reflect"
+	"errors"
 	"fmt"
 )
 
@@ -285,5 +286,234 @@ func TestSubmission(t *testing.T) {
 	want := DraftsResponse{Posts: []json.RawMessage{}}
 	if !reflect.DeepEqual(submission, want) {
 		t.Errorf("Submission returned %+v, want %+v", submission, want)
+	}
+}
+
+func TestFollow(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/user/follow", func(w http.ResponseWriter, r *http.Request) {
+			if m := "POST"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"meta": {"status":404, "msg": "Not Found"}}`)
+		})
+
+	follow := client.Follow("thehungergames")
+	want := errors.New("Not Found")
+	if !reflect.DeepEqual(follow, want) {
+		t.Errorf("Follow returned %+v, want %+v", follow, want)
+	}
+}
+
+func TestUnfollow(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/user/unfollow", func(w http.ResponseWriter, r *http.Request) {
+			if m := "POST"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"meta": {"status":404, "msg": "Not Found"}}`)
+		})
+
+	unfollow := client.Unfollow("thehungergames")
+	want := errors.New("Not Found")
+	if !reflect.DeepEqual(unfollow, want) {
+		t.Errorf("Unfollow returned %+v, want %+v", unfollow, want)
+	}
+}
+
+func TestLike(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/user/like", func(w http.ResponseWriter, r *http.Request) {
+			if m := "POST"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"meta": {"status":200, "msg": "OK"}}`)
+		})
+
+	like := client.Like("75195127536", "kLXwhQ19")
+	if like != nil {
+		t.Errorf("Like returned %+v, want %+v", like, nil)
+	}
+}
+
+func TestUnlike(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/user/unlike", func(w http.ResponseWriter, r *http.Request) {
+			if m := "POST"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"meta": {"status":200, "msg": "OK"}}`)
+		})
+
+	unlike := client.Unlike("75195127536", "kLXwhQ19")
+	if unlike != nil {
+		t.Errorf("Unlike returned %+v, want %+v", unlike, nil)
+	}
+}
+
+func TestCreatePhoto(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/blog/mgterzieva/post", func(w http.ResponseWriter, r *http.Request) {
+			if m := "POST"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"meta": {"status":400, "msg": "Bad Request"}}`)
+		})
+
+	post_photo := client.CreatePhoto("mgterzieva", map[string]string{"state": "draft"})
+	want := errors.New("Bad Request")
+	if !reflect.DeepEqual(post_photo, want) {
+		t.Errorf("CreatePhoto returned %+v, want %+v", post_photo, want)
+	}
+}
+
+func TestCreateText(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/blog/mgterzieva/post", func(w http.ResponseWriter, r *http.Request) {
+			if m := "POST"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"meta": {"status": 201, "msg": "Created"}}`)
+		})
+
+	post_text := client.CreateText("mgterzieva", map[string]string{"body": "Hello, hello!"})
+	if post_text != nil {
+		t.Errorf("CreateText returned %+v, want %+v", post_text, nil)
+	}
+}
+
+func TestCreateQuote(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/blog/mgterzieva/post", func(w http.ResponseWriter, r *http.Request) {
+			if m := "POST"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"meta": {"status": 201, "msg": "Created"}}`)
+		})
+	quote := "You can complain because roses have thorns, or you can rejoice because thorns have roses."
+	source := "Ziggy"
+	post_quote := client.CreateQuote("mgterzieva", map[string]string{"source": source, "quote": quote})
+	if post_quote != nil {
+		t.Errorf("CreateQuote returned %+v, want %+v", post_quote, nil)
+	}
+}
+
+func TestCreateChatPost(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/blog/mgterzieva/post", func(w http.ResponseWriter, r *http.Request) {
+			if m := "POST"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"meta": {"status": 400, "msg": "Bad Request"}}`)
+		})
+
+	post_discussion := client.CreateChatPost("mgterzieva", map[string]string{})
+	want := errors.New("Bad Request")
+	if !reflect.DeepEqual(post_discussion, want) {
+		t.Errorf("CreateChatPost returned %+v, want %+v", post_discussion, nil)
+	}
+}
+
+func TestCreateAudio(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/blog/mgterzieva/post", func(w http.ResponseWriter, r *http.Request) {
+			if m := "POST"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"meta": {"status": 201, "msg": "Created"}}`)
+		})
+
+	post_song := client.CreateAudio("mgterzieva", map[string]string{"external_url": "http://coolsongs.com/song"})
+	if post_song != nil {
+		t.Errorf("CreateAudio returned %+v, want %+v", post_song, nil)
+	}
+}
+
+func TestCreateVideo(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/blog/mgterzieva/post", func(w http.ResponseWriter, r *http.Request) {
+			if m := "POST"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"meta": {"status": 201, "msg": "Created"}}`)
+		})
+	code := `<iframe width="560" height="315" src="//www.videos.com/embed/uMNGkgsgaB" frameborder="0" allowfullscreen></iframe>`
+	post_video := client.CreateVideo("mgterzieva", map[string]string{"embed": code})
+	if post_video != nil {
+		t.Errorf("CreateVideo returned %+v, want %+v", post_video, nil)
+	}
+}
+
+func TestReblog(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/blog/mgterzieva/post/reblog", func(w http.ResponseWriter, r *http.Request) {
+			if m := "POST"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"meta": {"status": 400, "msg": "Bad Request"}}`)
+		})
+
+	reblog := client.Reblog("mgterzieva", map[string]string{"id": "7161981", "reblog_key": "blah"})
+	want := errors.New("Bad Request")
+	if !reflect.DeepEqual(reblog, want) {
+		t.Errorf("Reblog returned %+v, want %+v", reblog, nil)
+	}
+}
+
+func TestDeletePost(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/blog/mgterzieva/post/delete", func(w http.ResponseWriter, r *http.Request) {
+			if m := "POST"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"meta": {"status": 400, "msg": "Bad Request"}}`)
+		})
+
+	delete := client.DeletePost("mgterzieva", "")
+	want := errors.New("Bad Request")
+	if !reflect.DeepEqual(delete, want) {
+		t.Errorf("DeletePost returned %+v, want %+v", delete, want)
+	}
+}
+
+func TestEditPost(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/blog/mgterzieva/post/edit", func(w http.ResponseWriter, r *http.Request) {
+			if m := "POST"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"meta": {"status": 400, "msg": "Bad Request"}}`)
+		})
+
+	edit := client.EditPost("mgterzieva", map[string]string{})
+	want := errors.New("Bad Request")
+	if !reflect.DeepEqual(edit, want) {
+		t.Errorf("EditPost returned %+v, want %+v", edit, want)
 	}
 }
