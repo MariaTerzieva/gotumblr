@@ -163,19 +163,55 @@ func TestPosts(t *testing.T) {
 }
 
 func TestAvatar(t *testing.T) {
-    setup()
-    defer teardown()
+	setup()
+	defer teardown()
 
-    mux.HandleFunc("/v2/blog/mgterzieva/avatar/64", func(w http.ResponseWriter, r *http.Request) {
-            if m := "GET"; m != r.Method {
-                t.Errorf("Request method = %v, want %v", r.Method, m)
-            }
-            fmt.Fprint(w, `{"response": {"avatar_url": "http://cool-pic.jpg"}}`)
-        })
+	mux.HandleFunc("/v2/blog/mgterzieva/avatar/64", func(w http.ResponseWriter, r *http.Request) {
+			if m := "GET"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"response": {"avatar_url": "http://cool-pic.jpg"}}`)
+		})
 
-    avatar := client.Avatar("mgterzieva", 64).Avatar_url
-    want := "http://cool-pic.jpg"
-    if avatar != want {
-        t.Errorf("Avatar returned %+v, want %+v", avatar, want)
-    }
+	avatar := client.Avatar("mgterzieva", 64).Avatar_url
+	want := "http://cool-pic.jpg"
+	if avatar != want {
+		t.Errorf("Avatar returned %+v, want %+v", avatar, want)
+	}
+}
+
+func TestBlogInfo(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/blog/mgterzieva/info", func(w http.ResponseWriter, r *http.Request) {
+			if m := "GET"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"response": {"blog": {"updated": 1392218146, "ask": false, "ask_anon": false}}}`)
+		})
+
+	info := client.BlogInfo("mgterzieva").Blog
+	want := BlogInfo{Updated: 1392218146, Ask: false, Ask_anon: false}
+	if info != want {
+		t.Errorf("BlogInfo returned %+v, want %+v", info, want)
+	}
+}
+
+func TestFollowers(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v2/blog/mgterzieva/followers", func(w http.ResponseWriter, r *http.Request) {
+			if m := "GET"; m != r.Method {
+				t.Errorf("Request method = %v, want %v", r.Method, m)
+			}
+			fmt.Fprint(w, `{"response": {"total_users": 0, "users": []}}`)
+		})
+
+	followers := client.Followers("mgterzieva", map[string]string{})
+	want := FollowersResponse{Total_users: 0, Users: []User{}}
+	if !reflect.DeepEqual(followers, want) {
+		t.Errorf("Followers returned %+v, want %+v", followers, want)
+	}
 }
