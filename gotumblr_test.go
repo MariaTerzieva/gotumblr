@@ -77,7 +77,7 @@ func TestLikes(t *testing.T) {
 
 	likes := client.Likes(map[string]string{}).Liked_count
 	want := int64(63)
-	if !reflect.DeepEqual(likes, want) {
+	if likes != want {
 		t.Errorf("Likes returned %+v, want %v", likes, want)
 	}
 }
@@ -95,7 +95,7 @@ func TestFollowing(t *testing.T) {
 
 	following := client.Following(map[string]string{}).Total_blogs
 	want := int64(1)
-	if !reflect.DeepEqual(following, want) {
+	if following != want {
 		t.Errorf("Following returned %+v, want %v", following, want)
 	}
 }
@@ -115,7 +115,7 @@ func TestDashboard(t *testing.T) {
 	var post BasePost
 	json.Unmarshal(posts[0], &post)
 	want := "photo"
-	if !reflect.DeepEqual(post.PostType, want) {
+	if post.PostType != want {
 		t.Errorf("Posts returned %+v, want %v", post.PostType, want)
 	}
 }
@@ -135,7 +135,7 @@ func TestTagged(t *testing.T) {
 	var post BasePost
 	json.Unmarshal(posts[0], &post)
 	want := "html"
-	if !reflect.DeepEqual(post.Format, want) {
+	if post.Format != want {
 		t.Errorf("Posts returned %+v, want %v", post.Format, want)
 	}
 }
@@ -153,11 +153,29 @@ func TestPosts(t *testing.T) {
 
 	data := client.Posts("mgterzieva", "html", map[string]string{})
 	want := "none"
-	if !reflect.DeepEqual(data.Blog.Description, want) {
+	if data.Blog.Description != want {
 		t.Errorf("Description returned %+v, want %v", data.Blog.Description, want)
 	}
 	expected := int64(8)
-	if !reflect.DeepEqual(data.Total_posts, expected) {
+	if data.Total_posts != expected {
 		t.Errorf("Total_posts returned %+v, expected %v", data.Total_posts, expected)
 	}
+}
+
+func TestAvatar(t *testing.T) {
+    setup()
+    defer teardown()
+
+    mux.HandleFunc("/v2/blog/mgterzieva/avatar/64", func(w http.ResponseWriter, r *http.Request) {
+            if m := "GET"; m != r.Method {
+                t.Errorf("Request method = %v, want %v", r.Method, m)
+            }
+            fmt.Fprint(w, `{"response": {"avatar_url": "http://cool-pic.jpg"}}`)
+        })
+
+    avatar := client.Avatar("mgterzieva", 64).Avatar_url
+    want := "http://cool-pic.jpg"
+    if avatar != want {
+        t.Errorf("Avatar returned %+v, want %+v", avatar, want)
+    }
 }
