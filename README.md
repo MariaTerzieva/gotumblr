@@ -38,7 +38,7 @@ Examples
 
 First import the package in your project as shown above.
 
-Then create NewTublrRestClient with your credentials(consumer key, consumer secret, token, token secret and callback url):
+Then create NewTumblrRestClient with your credentials(consumer key, consumer secret, token, token secret and callback url):
 
 		client := gotumblr.NewTumblrRestClient("consumer_key", "consumer_secret", "token", "token_secret", "callback_url", "http://api.tumblr.com")
 
