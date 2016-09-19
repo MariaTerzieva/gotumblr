@@ -259,8 +259,12 @@ func (trc *TumblrRestClient) Unlike(id, reblogKey string) error {
 
 //Create a photo post or photoset on a blog.
 //blogname: the url of the blog you want to post to.
-//options can be:
-//(with * are marked required options)
+//
+//One of the following two options is REQUIRED
+//source: the URL of the image to post
+//data64: a base64 encoding of image file to upload
+// 
+//additional optional options can be:
 //state: the state of the post(e.g. published, draft, queue, private);
 //tags: a list of tags you want applied to the post;
 //tweet: manages the autotweet for this post: set to off for no tweet
@@ -270,7 +274,6 @@ func (trc *TumblrRestClient) Unlike(id, reblogKey string) error {
 //slug: add a short text summary to the end of the post url;
 //caption: the caption that you want applied to the photo;
 //link: the 'click-through' url for the photo;
-//*source: the photo source url.
 func (trc *TumblrRestClient) CreatePhoto(blogname string, options map[string]string) error {
 	requestUrl := fmt.Sprintf("/v2/blog/%s/post", blogname)
 	options["type"] = "photo"
