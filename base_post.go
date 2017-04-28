@@ -17,6 +17,7 @@ type BasePost struct {
 	Liked        bool
 	State        string
 	Total_Posts  int64
+	Note_count   int64
 	Notes        []Note
 }
 
