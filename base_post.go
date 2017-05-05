@@ -17,4 +17,18 @@ type BasePost struct {
 	Liked        bool
 	State        string
 	Total_Posts  int64
+	Note_count   int64
+	Notes        []Note
+}
+
+type Note struct {
+	Type                    string
+	Timestamp               int64
+	Blog_name               string
+	Blog_uuid               string
+	Blog_url                string
+	Followed                bool
+	Avatar_shape            string
+	Post_id                 string
+	Reblog_parent_blog_name string
 }
