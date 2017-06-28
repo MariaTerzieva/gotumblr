@@ -19,6 +19,7 @@ type BasePost struct {
 	Total_Posts  int64
 	Note_count   int64
 	Notes        []Note
+	Photos       []Photo
 }
 
 type Note struct {
@@ -31,4 +32,16 @@ type Note struct {
 	Avatar_shape            string
 	Post_id                 string
 	Reblog_parent_blog_name string
+}
+
+type Photo struct {
+	Caption                 string
+	Alt_sizes               []Img_size
+	Original_size           Img_size
+}
+
+type Img_size struct {
+	Width                	int64
+	Height              	int64
+	Url						string
 }
