@@ -133,6 +133,20 @@ func (trc *TumblrRestClient) Posts(blogname, postsType string, options map[strin
 	return result
 }
 
+//Gets a list of notes on a post.
+//options can be:
+//before_timestamp: return only notes created before the given timestamp
+func (trc *TumblrRestClient) Notes(blogname, postId string, options map[string]string) NotesResponse {
+	requestUrl := fmt.Sprintf("/v2/blog/%s/notes", blogname)
+	options["api_key"] = trc.request.apiKey
+	options["id"] = postId
+	options["mode"] = "rollup"
+	data := trc.request.Get(requestUrl, options)
+	var result NotesResponse
+	json.Unmarshal(data.Response, &result)
+	return result
+}
+
 //Gets general information about the blog.
 //blogname: name of the blog you want to get information about(e.g. mgterzieva.tumblr.com).
 func (trc *TumblrRestClient) BlogInfo(blogname string) BlogInfoResponse {
