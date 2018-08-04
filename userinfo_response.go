@@ -1,5 +1,5 @@
 package gotumblr
 
 type UserInfoResponse struct {
-	User UserInfo
+	User UserInfo `json:"user"`
 }

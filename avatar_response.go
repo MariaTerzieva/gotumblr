@@ -1,5 +1,5 @@
 package gotumblr
 
 type AvatarResponse struct {
-	Avatar_url string
+	AvatarURL string `json:"avatar_url"`
 }

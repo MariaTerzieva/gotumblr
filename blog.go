@@ -1,13 +1,13 @@
 package gotumblr
 
 type BlogInfo struct {
-	Title       string
-	Posts       int64
-	Name        string
-	Url         string
-	Updated     int64
-	Description string
-	Ask         bool
-	Ask_anon    bool
-	Likes       int64
+	Title       string `json:"title"`
+	Posts       int64  `json:"posts"`
+	Name        string `json:"name"`
+	URL         string `json:"url"`
+	Updated     int64  `json:"updated"`
+	Description string `json:"description"`
+	Ask         bool   `json:"ask"`
+	AskAnon     bool   `json:"ask_anon"`
+	Likes       int64  `json:"likes"`
 }

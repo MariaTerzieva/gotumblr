@@ -2,55 +2,55 @@ package gotumblr
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"testing"
 	"reflect"
-	"errors"
-	"fmt"
+	"testing"
 )
 
 var (
-	//mux is the HTTP request multiplexer used with the test server.
+	// mux is the HTTP request multiplexer used with the test server.
 	mux *http.ServeMux
 
-	//client is the Tublr client being tested.
-	client *TumblrRestClient
+	// client is the Tublr client being tested.
+	client *Client
 
-	//server is a test HTTP server used to provide mock API responses.
+	// server is a test HTTP server used to provide mock API responses.
 	server *httptest.Server
 )
 
-//setup sets up a test HTTP server along with a gotumblr.TumblrRestClient that is
+// setup sets up a test HTTP server along with a gotumblr.TumblrRestClient that is
 // configured to talk to that server. Tests should register handlers on
 // mux which provide mock responses for the API method being tested.
 func setup() {
-	//test server
+	// test server
 	mux = http.NewServeMux()
 	server = httptest.NewServer(mux)
 
-	//tumblr client configured to use test server
+	// tumblr client configured to use test server
 	host, _ := url.Parse(server.URL)
-	client = NewTumblrRestClient("", "", "", "", "", host.String())
+	client = New("", "", "", "", SetHost(host.String()))
 }
 
-//teardown closes the test HTTP server.
+// teardown closes the test HTTP server.
 func teardown() {
 	server.Close()
 }
 
-//checks the request parameters
-func checkParameters(request *http.Request, parameters map[string]string, t *testing.T) {
+// checks the request parameters
+func checkParameters(request *http.Request, parameters url.Values, t *testing.T) {
 	request.ParseForm()
-	for key, value := range parameters {
-		if request.Form.Get(key) != value {
-			t.Errorf("%v should be %v", key, value)
+	for key := range parameters {
+		if request.Form.Get(key) != parameters.Get(key) {
+			t.Errorf("%v should be %v", key, parameters.Get(key))
 		}
-	} 
+	}
 }
 
-func handleFunc(url, method, response string, parameters map[string]string, t *testing.T) {
+func handleFunc(url, method, response string, parameters url.Values, t *testing.T) {
 	mux.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
 		checkParameters(r, parameters, t)
 		if m := method; m != r.Method {
@@ -60,10 +60,13 @@ func handleFunc(url, method, response string, parameters map[string]string, t *t
 	})
 }
 
-func TestNewTumblrRestClient(t *testing.T) {
-	c := NewTumblrRestClient("", "", "", "", "", "http://api.tumblr.com")
-	if c.request.host != "http://api.tumblr.com" {
-		t.Errorf("New Client host = %v, want http://api.tumblr.com", c.request.host)
+func TestNew(t *testing.T) {
+	c := New("", "", "", "", SetHost("http://api.tumblr.com"))
+	if c.host != "http://api.tumblr.com" {
+		t.Errorf("New Client host = %v, want http://api.tumblr.com", c.host)
+	}
+	if c.apiKey != "" {
+		t.Errorf("New Client host = %v, want the empty string", c.apiKey)
 	}
 }
 
@@ -71,12 +74,16 @@ func TestInfo(t *testing.T) {
 	setup()
 	defer teardown()
 
-	handleFunc("/v2/user/info", "GET", `{"response": {"user": {"name": "mgterzieva"}}}`, map[string]string{}, t)
+	body := `{"meta": {"status": 200}, "response": {"user": {"name": "mgterzieva"}}}`
+	handleFunc("/v2/user/info", "GET", body, url.Values{}, t)
 
-	info := client.Info().User
+	info, err := client.Info()
+	if err != nil {
+		t.Fatal(err)
+	}
 	want := UserInfo{Name: "mgterzieva"}
-	if !reflect.DeepEqual(info, want) {
-		t.Errorf("Info returned %+v, want %+v", info, want)
+	if !reflect.DeepEqual(info.User, want) {
+		t.Errorf("Info returned %+v, want %+v", info.User, want)
 	}
 }
 
@@ -84,12 +91,16 @@ func TestLikes(t *testing.T) {
 	setup()
 	defer teardown()
 
-	handleFunc("/v2/user/likes", "GET", `{"response": {"liked_count": 63}}`, map[string]string{}, t)
+	body := `{"meta": {"status": 200}, "response": {"liked_count": 63}}`
+	handleFunc("/v2/user/likes", "GET", body, url.Values{}, t)
 
-	likes := client.Likes(map[string]string{}).Liked_count
+	likes, err := client.Likes(url.Values{})
+	if err != nil {
+		t.Fatal(err)
+	}
 	want := int64(63)
-	if likes != want {
-		t.Errorf("Likes returned %+v, want %v", likes, want)
+	if likes.LikedCount != want {
+		t.Errorf("Likes returned %+v, want %v", likes.LikedCount, want)
 	}
 }
 
@@ -97,12 +108,15 @@ func TestFollowing(t *testing.T) {
 	setup()
 	defer teardown()
 
-	handleFunc("/v2/user/following", "GET", `{"response": {"total_blogs": 1}}`, map[string]string{}, t)
+	handleFunc("/v2/user/following", "GET", `{"meta": {"status": 200}, "response": {"total_blogs": 1}}`, url.Values{}, t)
 
-	following := client.Following(map[string]string{}).Total_blogs
+	following, err := client.Following(url.Values{})
+	if err != nil {
+		t.Fatal(err)
+	}
 	want := int64(1)
-	if following != want {
-		t.Errorf("Following returned %+v, want %v", following, want)
+	if following.TotalBlogs != want {
+		t.Errorf("Following returned %+v, want %v", following.TotalBlogs, want)
 	}
 }
 
@@ -110,11 +124,14 @@ func TestDashboard(t *testing.T) {
 	setup()
 	defer teardown()
 
-	handleFunc("/v2/user/dashboard", "GET", `{"response": {"posts": [{"type": "photo"}]}}`, map[string]string{}, t)
+	handleFunc("/v2/user/dashboard", "GET", `{"meta": {"status": 200}, "response": {"posts": [{"type": "photo"}]}}`, url.Values{}, t)
 
-	posts := client.Dashboard(map[string]string{}).Posts
+	posts, err := client.Dashboard(url.Values{})
+	if err != nil {
+		t.Fatal(err)
+	}
 	var post BasePost
-	json.Unmarshal(posts[0], &post)
+	json.Unmarshal(posts.Posts[0], &post)
 	want := "photo"
 	if post.PostType != want {
 		t.Errorf("Posts returned %+v, want %v", post.PostType, want)
@@ -125,9 +142,13 @@ func TestTagged(t *testing.T) {
 	setup()
 	defer teardown()
 
-	handleFunc("/v2/tagged", "GET", `{"response": [{"format": "html"}]}`, map[string]string{}, t)
+	res := `{"meta": {"status": 200}, "response": [{"format": "html"}]}`
+	handleFunc("/v2/tagged", "GET", res, url.Values{}, t)
 
-	posts := client.Tagged("golang", map[string]string{})
+	posts, err := client.Tagged("golang", url.Values{})
+	if err != nil {
+		t.Fatal(err)
+	}
 	var post BasePost
 	json.Unmarshal(posts[0], &post)
 	want := "html"
@@ -140,18 +161,20 @@ func TestPosts(t *testing.T) {
 	setup()
 	defer teardown()
 
-	response := `{"response": {"blog": {"description": "none"}, "total_posts": 8}}`
+	res := `{"meta": {"status": 200}, "response": {"blog": {"description": "none"}, "total_posts": 8}}`
+	handleFunc("/v2/blog/mgterzieva/posts/html", "GET", res, url.Values{}, t)
 
-	handleFunc("/v2/blog/mgterzieva/posts/html", "GET", response, map[string]string{}, t)
-
-	data := client.Posts("mgterzieva", "html", map[string]string{})
+	data, err := client.Posts("mgterzieva", "html", url.Values{})
+	if err != nil {
+		t.Fatal(err)
+	}
 	want := "none"
 	if data.Blog.Description != want {
 		t.Errorf("Description returned %+v, want %v", data.Blog.Description, want)
 	}
 	expected := int64(8)
-	if data.Total_posts != expected {
-		t.Errorf("Total_posts returned %+v, expected %v", data.Total_posts, expected)
+	if data.TotalPosts != expected {
+		t.Errorf("TotalPosts returned %+v, expected %v", data.TotalPosts, expected)
 	}
 }
 
@@ -159,14 +182,16 @@ func TestAvatar(t *testing.T) {
 	setup()
 	defer teardown()
 
-	response := `{"response": {"avatar_url": "http://cool-pic.jpg"}}`
+	res := `{"meta": {"status": 200}, "response": {"avatar_url": "http://cool-pic.jpg"}}`
+	handleFunc("/v2/blog/mgterzieva/avatar/64", "GET", res, url.Values{}, t)
 
-	handleFunc("/v2/blog/mgterzieva/avatar/64", "GET", response, map[string]string{}, t)
-
-	avatar := client.Avatar("mgterzieva", 64).Avatar_url
+	avatar, err := client.Avatar("mgterzieva", 64)
+	if err != nil {
+		t.Fatal(err)
+	}
 	want := "http://cool-pic.jpg"
-	if avatar != want {
-		t.Errorf("Avatar returned %+v, want %+v", avatar, want)
+	if avatar.AvatarURL != want {
+		t.Errorf("Avatar returned %+v, want %+v", avatar.AvatarURL, want)
 	}
 }
 
@@ -174,14 +199,16 @@ func TestBlogInfo(t *testing.T) {
 	setup()
 	defer teardown()
 
-	response := `{"response": {"blog": {"updated": 1392218146, "ask": false, "ask_anon": false}}}`
+	res := `{"meta": {"status": 200}, "response": {"blog": {"updated": 1392218146, "ask": false, "ask_anon": false}}}`
+	handleFunc("/v2/blog/mgterzieva/info", "GET", res, url.Values{}, t)
 
-	handleFunc("/v2/blog/mgterzieva/info", "GET", response, map[string]string{}, t)
-
-	info := client.BlogInfo("mgterzieva").Blog
-	want := BlogInfo{Updated: 1392218146, Ask: false, Ask_anon: false}
-	if info != want {
-		t.Errorf("BlogInfo returned %+v, want %+v", info, want)
+	info, err := client.BlogInfo("mgterzieva")
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := BlogInfo{Updated: 1392218146, Ask: false, AskAnon: false}
+	if info.Blog != want {
+		t.Errorf("BlogInfo returned %+v, want %+v", info.Blog, want)
 	}
 }
 
@@ -189,12 +216,14 @@ func TestFollowers(t *testing.T) {
 	setup()
 	defer teardown()
 
-	response := `{"response": {"total_users": 0, "users": []}}`
+	res := `{"meta": {"status": 200}, "response": {"total_users": 0, "users": []}}`
+	handleFunc("/v2/blog/mgterzieva/followers", "GET", res, url.Values{}, t)
 
-	handleFunc("/v2/blog/mgterzieva/followers", "GET", response, map[string]string{}, t)
-
-	followers := client.Followers("mgterzieva", map[string]string{})
-	want := FollowersResponse{Total_users: 0, Users: []User{}}
+	followers, err := client.Followers("mgterzieva", url.Values{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := FollowersResponse{TotalUsers: 0, Users: []User{}}
 	if !reflect.DeepEqual(followers, want) {
 		t.Errorf("Followers returned %+v, want %+v", followers, want)
 	}
@@ -204,12 +233,14 @@ func TestBlogLikes(t *testing.T) {
 	setup()
 	defer teardown()
 
-	response := `{"response": {"liked_posts": [], "liked_count": 0}}`
+	res := `{"meta": {"status": 200}, "response": {"liked_posts": [], "liked_count": 0}}`
+	handleFunc("/v2/blog/mgterzieva/likes", "GET", res, url.Values{}, t)
 
-	handleFunc("/v2/blog/mgterzieva/likes", "GET", response, map[string]string{}, t)
-
-	likes := client.BlogLikes("mgterzieva", map[string]string{})
-	want := LikesResponse{Liked_posts: []json.RawMessage{}, Liked_count: 0}
+	likes, err := client.BlogLikes("mgterzieva", url.Values{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := LikesResponse{LikedPosts: []json.RawMessage{}, LikedCount: 0}
 	if !reflect.DeepEqual(likes, want) {
 		t.Errorf("BlogLikes returned %+v, want %+v", likes, want)
 	}
@@ -219,9 +250,13 @@ func TestQueue(t *testing.T) {
 	setup()
 	defer teardown()
 
-	handleFunc("/v2/blog/mgterzieva/posts/queue", "GET", `{"response": {"posts": []}}`, map[string]string{}, t)
+	res := `{"meta": {"status": 200}, "response": {"posts": []}}`
+	handleFunc("/v2/blog/mgterzieva/posts/queue", "GET", res, url.Values{}, t)
 
-	queue := client.Queue("mgterzieva", map[string]string{})
+	queue, err := client.Queue("mgterzieva", url.Values{})
+	if err != nil {
+		t.Fatal(err)
+	}
 	want := DraftsResponse{Posts: []json.RawMessage{}}
 	if !reflect.DeepEqual(queue, want) {
 		t.Errorf("Queue returned %+v, want %+v", queue, want)
@@ -232,9 +267,13 @@ func TestDrafts(t *testing.T) {
 	setup()
 	defer teardown()
 
-	handleFunc("/v2/blog/mgterzieva/posts/draft", "GET", `{"response": {"posts": []}}`, map[string]string{}, t)
+	res := `{"meta": {"status": 200}, "response": {"posts": []}}`
+	handleFunc("/v2/blog/mgterzieva/posts/draft", "GET", res, url.Values{}, t)
 
-	drafts := client.Drafts("mgterzieva", map[string]string{})
+	drafts, err := client.Drafts("mgterzieva", url.Values{})
+	if err != nil {
+		t.Fatal(err)
+	}
 	want := DraftsResponse{Posts: []json.RawMessage{}}
 	if !reflect.DeepEqual(drafts, want) {
 		t.Errorf("Drafts returned %+v, want %+v", drafts, want)
@@ -245,9 +284,13 @@ func TestSubmission(t *testing.T) {
 	setup()
 	defer teardown()
 
-	handleFunc("/v2/blog/mgterzieva/posts/submission", "GET", `{"response": {"posts": []}}`, map[string]string{}, t)
+	res := `{"meta": {"status": 200}, "response": {"posts": []}}`
+	handleFunc("/v2/blog/mgterzieva/posts/submission", "GET", res, url.Values{}, t)
 
-	submission := client.Submission("mgterzieva", map[string]string{})
+	submission, err := client.Submission("mgterzieva", url.Values{})
+	if err != nil {
+		t.Fatal(err)
+	}
 	want := DraftsResponse{Posts: []json.RawMessage{}}
 	if !reflect.DeepEqual(submission, want) {
 		t.Errorf("Submission returned %+v, want %+v", submission, want)
@@ -258,9 +301,10 @@ func TestFollow(t *testing.T) {
 	setup()
 	defer teardown()
 
-	response := `{"meta": {"status":404, "msg": "Not Found"}}`
-
-	handleFunc("/v2/user/follow", "POST", response, map[string]string{"url": "thehungergames"}, t)
+	res := `{"meta": {"status": 404, "msg": "Not Found"}}`
+	handleFunc("/v2/user/follow", "POST", res, url.Values{
+		"url": []string{"thehungergames"},
+	}, t)
 
 	follow := client.Follow("thehungergames")
 	want := errors.New("Not Found")
@@ -273,9 +317,10 @@ func TestUnfollow(t *testing.T) {
 	setup()
 	defer teardown()
 
-	response := `{"meta": {"status":404, "msg": "Not Found"}}`
-
-	handleFunc("/v2/user/unfollow", "POST", response, map[string]string{"url": "thehungergames"}, t)
+	res := `{"meta": {"status":404, "msg": "Not Found"}}`
+	handleFunc("/v2/user/unfollow", "POST", res, url.Values{
+		"url": []string{"thehungergames"},
+	}, t)
 
 	unfollow := client.Unfollow("thehungergames")
 	want := errors.New("Not Found")
@@ -288,9 +333,11 @@ func TestLike(t *testing.T) {
 	setup()
 	defer teardown()
 
-	response := `{"meta": {"status":200, "msg": "OK"}}`
-
-	handleFunc("/v2/user/like", "POST", response, map[string]string{"id": "75195127536", "reblog_key": "kLXwhQ19"}, t)
+	res := `{"meta": {"status":200, "msg": "OK"}}`
+	handleFunc("/v2/user/like", "POST", res, url.Values{
+		"id":         []string{"75195127536"},
+		"reblog_key": []string{"kLXwhQ19"},
+	}, t)
 
 	like := client.Like("75195127536", "kLXwhQ19")
 	if like != nil {
@@ -302,9 +349,11 @@ func TestUnlike(t *testing.T) {
 	setup()
 	defer teardown()
 
-	response := `{"meta": {"status":200, "msg": "OK"}}`
-
-	handleFunc("/v2/user/unlike", "POST", response, map[string]string{"id": "75195127536", "reblog_key": "kLXwhQ19"}, t)
+	res := `{"meta": {"status": 200, "msg": "OK"}}`
+	handleFunc("/v2/user/unlike", "POST", res, url.Values{
+		"id":         []string{"75195127536"},
+		"reblog_key": []string{"kLXwhQ19"},
+	}, t)
 
 	unlike := client.Unlike("75195127536", "kLXwhQ19")
 	if unlike != nil {
@@ -316,14 +365,17 @@ func TestCreatePhoto(t *testing.T) {
 	setup()
 	defer teardown()
 
-	response := `{"meta": {"status":400, "msg": "Bad Request"}}`
+	res := `{"meta": {"status": 400, "msg": "Bad Request"}}`
+	handleFunc("/v2/blog/mgterzieva/post", "POST", res, url.Values{
+		"state": []string{"draft"},
+	}, t)
 
-	handleFunc("/v2/blog/mgterzieva/post", "POST", response, map[string]string{"state": "draft"}, t)
-
-	post_photo := client.CreatePhoto("mgterzieva", map[string]string{"state": "draft"})
+	err := client.CreatePhoto("mgterzieva", url.Values{
+		"state": []string{"draft"},
+	})
 	want := errors.New("Bad Request")
-	if !reflect.DeepEqual(post_photo, want) {
-		t.Errorf("CreatePhoto returned %+v, want %+v", post_photo, want)
+	if !reflect.DeepEqual(err, want) {
+		t.Errorf("CreatePhoto returned %+v, want %+v", err, want)
 	}
 }
 
@@ -331,13 +383,16 @@ func TestCreateText(t *testing.T) {
 	setup()
 	defer teardown()
 
-	response := `{"meta": {"status": 201, "msg": "Created"}}`
+	res := `{"meta": {"status": 201, "msg": "Created"}}`
+	handleFunc("/v2/blog/mgterzieva/post", "POST", res, url.Values{
+		"body": []string{"Hello, hello!"},
+	}, t)
 
-	handleFunc("/v2/blog/mgterzieva/post", "POST", response, map[string]string{"body": "Hello, hello!"}, t)
-
-	post_text := client.CreateText("mgterzieva", map[string]string{"body": "Hello, hello!"})
-	if post_text != nil {
-		t.Errorf("CreateText returned %+v, want %+v", post_text, nil)
+	err := client.CreateText("mgterzieva", url.Values{
+		"body": []string{"Hello, hello!"},
+	})
+	if err != nil {
+		t.Errorf("CreateText returned %+v, want %+v", err, nil)
 	}
 }
 
@@ -347,13 +402,18 @@ func TestCreateQuote(t *testing.T) {
 
 	quote := "You can complain because roses have thorns, or you can rejoice because thorns have roses."
 	source := "Ziggy"
-	response := `{"meta": {"status": 201, "msg": "Created"}}`
+	res := `{"meta": {"status": 201, "msg": "Created"}}`
+	handleFunc("/v2/blog/mgterzieva/post", "POST", res, url.Values{
+		"source": []string{source},
+		"quote":  []string{quote},
+	}, t)
 
-	handleFunc("/v2/blog/mgterzieva/post", "POST", response, map[string]string{"source": source, "quote": quote}, t)
-
-	post_quote := client.CreateQuote("mgterzieva", map[string]string{"source": source, "quote": quote})
-	if post_quote != nil {
-		t.Errorf("CreateQuote returned %+v, want %+v", post_quote, nil)
+	err := client.CreateQuote("mgterzieva", url.Values{
+		"source": []string{source},
+		"quote":  []string{quote},
+	})
+	if err != nil {
+		t.Errorf("CreateQuote returned %+v, want %+v", err, nil)
 	}
 }
 
@@ -361,14 +421,13 @@ func TestCreateChatPost(t *testing.T) {
 	setup()
 	defer teardown()
 
-	response := `{"meta": {"status": 400, "msg": "Bad Request"}}`
+	res := `{"meta": {"status": 400, "msg": "Bad Request"}}`
+	handleFunc("/v2/blog/mgterzieva/post", "POST", res, url.Values{}, t)
 
-	handleFunc("/v2/blog/mgterzieva/post", "POST", response, map[string]string{}, t)
-
-	post_discussion := client.CreateChatPost("mgterzieva", map[string]string{})
+	err := client.CreateChatPost("mgterzieva", url.Values{})
 	want := errors.New("Bad Request")
-	if !reflect.DeepEqual(post_discussion, want) {
-		t.Errorf("CreateChatPost returned %+v, want %+v", post_discussion, nil)
+	if !reflect.DeepEqual(err, want) {
+		t.Errorf("CreateChatPost returned %+v, want %+v", err, nil)
 	}
 }
 
@@ -376,13 +435,16 @@ func TestCreateAudio(t *testing.T) {
 	setup()
 	defer teardown()
 
-	response := `{"meta": {"status": 201, "msg": "Created"}}`
+	res := `{"meta": {"status": 201, "msg": "Created"}}`
+	handleFunc("/v2/blog/mgterzieva/post", "POST", res, url.Values{
+		"externalURL": []string{"http://coolsongs.com/song"},
+	}, t)
 
-	handleFunc("/v2/blog/mgterzieva/post", "POST", response, map[string]string{"external_url": "http://coolsongs.com/song"}, t)
-
-	post_song := client.CreateAudio("mgterzieva", map[string]string{"external_url": "http://coolsongs.com/song"})
-	if post_song != nil {
-		t.Errorf("CreateAudio returned %+v, want %+v", post_song, nil)
+	err := client.CreateAudio("mgterzieva", url.Values{
+		"externalURL": []string{"http://coolsongs.com/song"},
+	})
+	if err != nil {
+		t.Errorf("CreateAudio returned %+v, want %+v", err, nil)
 	}
 }
 
@@ -390,13 +452,16 @@ func TestCreateVideo(t *testing.T) {
 	setup()
 	defer teardown()
 	code := `<iframe width="560" height="315" src="//www.videos.com/embed/uMNGkgsgaB" frameborder="0" allowfullscreen></iframe>`
-	response := `{"meta": {"status": 201, "msg": "Created"}}`
+	res := `{"meta": {"status": 201, "msg": "Created"}}`
+	handleFunc("/v2/blog/mgterzieva/post", "POST", res, url.Values{
+		"embed": []string{code},
+	}, t)
 
-	handleFunc("/v2/blog/mgterzieva/post", "POST", response, map[string]string{"embed": code}, t)
-
-	post_video := client.CreateVideo("mgterzieva", map[string]string{"embed": code})
-	if post_video != nil {
-		t.Errorf("CreateVideo returned %+v, want %+v", post_video, nil)
+	err := client.CreateVideo("mgterzieva", url.Values{
+		"embed": []string{code},
+	})
+	if err != nil {
+		t.Errorf("CreateVideo returned %+v, want %+v", err, nil)
 	}
 }
 
@@ -404,11 +469,16 @@ func TestReblog(t *testing.T) {
 	setup()
 	defer teardown()
 
-	response := `{"meta": {"status": 400, "msg": "Bad Request"}}`
+	res := `{"meta": {"status": 400, "msg": "Bad Request"}}`
+	handleFunc("/v2/blog/mgterzieva/post/reblog", "POST", res, url.Values{
+		"id":         []string{"7161981"},
+		"reblog_key": []string{"blah"},
+	}, t)
 
-	handleFunc("/v2/blog/mgterzieva/post/reblog", "POST", response, map[string]string{"id": "7161981", "reblog_key": "blah"}, t)
-
-	reblog := client.Reblog("mgterzieva", map[string]string{"id": "7161981", "reblog_key": "blah"})
+	reblog := client.Reblog("mgterzieva", url.Values{
+		"id":         []string{"7161981"},
+		"reblog_key": []string{"blah"},
+	})
 	want := errors.New("Bad Request")
 	if !reflect.DeepEqual(reblog, want) {
 		t.Errorf("Reblog returned %+v, want %+v", reblog, nil)
@@ -419,9 +489,10 @@ func TestDeletePost(t *testing.T) {
 	setup()
 	defer teardown()
 
-	response := `{"meta": {"status": 400, "msg": "Bad Request"}}`
-
-	handleFunc("/v2/blog/mgterzieva/post/delete", "POST", response, map[string]string{"id": ""}, t)
+	res := `{"meta": {"status": 400, "msg": "Bad Request"}}`
+	handleFunc("/v2/blog/mgterzieva/post/delete", "POST", res, url.Values{
+		"id": []string{""},
+	}, t)
 
 	delete := client.DeletePost("mgterzieva", "")
 	want := errors.New("Bad Request")
@@ -434,11 +505,10 @@ func TestEditPost(t *testing.T) {
 	setup()
 	defer teardown()
 
-	response := `{"meta": {"status": 400, "msg": "Bad Request"}}`
+	res := `{"meta": {"status": 400, "msg": "Bad Request"}}`
+	handleFunc("/v2/blog/mgterzieva/post/edit", "POST", res, url.Values{}, t)
 
-	handleFunc("/v2/blog/mgterzieva/post/edit", "POST", response, map[string]string{}, t)
-
-	edit := client.EditPost("mgterzieva", map[string]string{})
+	edit := client.EditPost("mgterzieva", url.Values{})
 	want := errors.New("Bad Request")
 	if !reflect.DeepEqual(edit, want) {
 		t.Errorf("EditPost returned %+v, want %+v", edit, want)

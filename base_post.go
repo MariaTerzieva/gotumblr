@@ -1,46 +1,42 @@
 package gotumblr
 
+import "encoding/json"
+
 type BasePost struct {
-	Blog_name                  string
-	Id                         int64
-	Post_url                   string
-	PostType                   string `json:"type"`
-	Timestamp                  int64
-	Date                       string
-	Format                     string
-	Reblog_key                 string
-	Tags                       []string
-	Bookmarklet                bool
-	Mobile                     bool
-	Source_url                 string
-	Source_title               string
-	Liked                      bool
-	State                      string
-	Total_Posts                int64
-	Note_count                 int64
-	Notes                      []Note
-	Reblogged_from_id          string
-	Reblogged_from_url         string
-	Reblogged_from_name        string
-	Reblogged_from_title       string
-	Reblogged_from_uuid        string
-	Reblogged_from_can_message bool
-	Reblogged_root_id          string
-	Reblogged_root_url         string
-	Reblogged_root_name        string
-	Reblogged_root_title       string
-	Reblogged_root_uuid        string
-	Reblogged_root_can_message bool
+	BlogName                string        `json:"blog_name"`
+	ID                      json.Number   `json:"id"`
+	PostURL                 string        `json:"post_url"`
+	PostType                string        `json:"type"`
+	Timestamp               int64         `json:"timestamp"`
+	Date                    string        `json:"date"`
+	Format                  string        `json:"format"`
+	ReblogKey               string        `json:"reblog_key"`
+	Tags                    []string      `json:"tags"`
+	Bookmarklet             bool          `json:"bookmarklet"`
+	Mobile                  bool          `json:"mobile"`
+	SourceURL               string        `json:"source_url"`
+	SourceTitle             string        `json:"source_title"`
+	Liked                   bool          `json:"liked"`
+	State                   string        `json:"state"`
+	TotalPosts              int64         `json:"total_posts"`
+	NoteCount               int64         `json:"note_count"`
+	Notes                   []Note        `json:"notes"`
+	Reblog                  ReblogComment `json:"reblog"`
+	RebloggedFromID         json.Number   `json:"reblogged_from_id"`
+	RebloggedFromURL        string        `json:"reblogged_from_url"`
+	RebloggedFromName       string        `json:"reblogged_from_name"`
+	RebloggedFromTitle      string        `json:"reblogged_from_title"`
+	RebloggedFromUUID       string        `json:"reblogged_from_uuid"`
+	RebloggedFromCanMessage bool          `json:"reblogged_from_can_message"`
+	RebloggedRootID         json.Number   `json:"reblogged_root_id"`
+	RebloggedRootURL        string        `json:"reblogged_root_url"`
+	RebloggedRootName       string        `json:"reblogged_root_name"`
+	RebloggedRootTitle      string        `json:"reblogged_root_title"`
+	RebloggedRootUUID       string        `json:"reblogged_root_uuid"`
+	RebloggedRootCanMessage bool          `json:"reblogged_root_can_message"`
 }
 
-type Note struct {
-	Type                    string
-	Timestamp               int64
-	Blog_name               string
-	Blog_uuid               string
-	Blog_url                string
-	Followed                bool
-	Avatar_shape            string
-	Post_id                 string
-	Reblog_parent_blog_name string
+type ReblogComment struct {
+	Comment  string `json:"comment"`
+	TreeHTML string `json:"tree_html"`
 }
