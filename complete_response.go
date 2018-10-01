@@ -1,8 +1,10 @@
 package gotumblr
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type CompleteResponse struct {
-	Meta     MetaInfo
-	Response json.RawMessage
+	Meta     MetaInfo        `json:"meta"`
+	Response json.RawMessage `json:"response"`
 }
