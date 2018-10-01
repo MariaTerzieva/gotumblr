@@ -1,6 +1,6 @@
 # gotumblr
 
-[![GoDoc](https://godoc.org/github.com/MariaTerzieva/gotumblr?status.svg)](https://godoc.org/github.com/MariaTerzieva/gotumblr)
+[![GoDoc](https://godoc.org/github.com/BakeRolls/gotumblr?status.svg)](https://godoc.org/github.com/BakeRolls/gotumblr)
 [![Go Report Card](https://goreportcard.com/badge/github.com/BakeRolls/gotumblr)](https://goreportcard.com/report/github.com/BakeRolls/gotumblr)
 
 A Go [Tumblr API](http://www.tumblr.com/docs/en/api/v2) v2 Client. This is a fork of [gotumblr](https://github.com/MariaTerzieva/gotumblr) by [Maria Terzieva](https://github.com/MariaTerzieva).
