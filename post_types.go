@@ -13,8 +13,9 @@ type AltSize struct {
 }
 
 type PhotoObject struct {
-	Caption  string    `json:"caption"`
-	AltSizes []AltSize `json:"alt_sizes"`
+	Caption      string    `json:"caption"`
+	OriginalSize AltSize   `json:"original_size"`
+	AltSizes     []AltSize `json:"alt_sizes"`
 }
 
 type PhotoPost struct {
