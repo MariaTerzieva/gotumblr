@@ -1,7 +1,9 @@
 package gotumblr
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type DraftsResponse struct {
-	Posts []json.RawMessage
+	Posts []json.RawMessage `json:"posts"`
 }

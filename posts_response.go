@@ -1,9 +1,11 @@
 package gotumblr
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type PostsResponse struct {
-	Blog  BlogInfo
-	Posts []json.RawMessage
-	Total_posts int64
+	Blog       BlogInfo          `json:"blog"`
+	Posts      []json.RawMessage `json:"posts"`
+	TotalPosts int64             `json:"total_posts"`
 }

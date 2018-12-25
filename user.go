@@ -1,8 +1,8 @@
 package gotumblr
 
 type User struct {
-	Name      string
-	Following bool
-	Url       string
-	Updated   int64
+	Name      string `json:"name"`
+	Following bool   `json:"following"`
+	URL       string `json:"url"`
+	Updated   int64  `json:"updated"`
 }

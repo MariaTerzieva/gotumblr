@@ -1,5 +1,5 @@
 package gotumblr
 
 type BlogInfoResponse struct {
-	Blog BlogInfo
+	Blog BlogInfo `json:"blog"`
 }

@@ -1,8 +1,10 @@
 package gotumblr
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type LikesResponse struct {
-	Liked_posts []json.RawMessage
-	Liked_count int64
+	LikedPosts []json.RawMessage `json:"liked_posts"`
+	LikedCount int64             `json:"liked_count"`
 }
